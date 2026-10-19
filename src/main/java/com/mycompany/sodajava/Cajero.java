@@ -9,5 +9,17 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class Cajero extends Empleado {
+
     
+    //constructor
+    public Cajero(String nombre, String rol, String usuario, String contrasena, String numeroEmpleado) {
+        super(nombre, rol, usuario, contrasena, numeroEmpleado);
+    }
+    
+    //metodos
+    public void marcarPedidoEntregado(Pedido  pedido){
+        
+    }
+            
+            
 }
