@@ -20,9 +20,8 @@ public class Factura {
     private EstadoFactura estado;       
     private String observaciones;
     private static final double IVA = 0.13;       
-    //Cosntructor        
-
     
+    //Cosntructor        
     public Factura(int numeroFactura, Cliente cliente,Cajero cajero, Pedido pedido, String observaciones) {
 
         this.numeroFactura = numeroFactura;
@@ -31,9 +30,13 @@ public class Factura {
         this.cajero = cajero;
         this.pedido = pedido;
         this.estado = EstadoFactura.PENDIENTE;
-        this.observaciones = observaciones;
+        this.observaciones = "";
     }
-
+     void asignarNumeroFactura(int numeroFactura) {
+        if (this.numeroFactura == 0 && numeroFactura > 0) {
+            this.numeroFactura = numeroFactura;
+        }
+    }
     
     
     //Metodos
@@ -102,21 +105,28 @@ public class Factura {
 
     
     public void registrarPreparacion(Cocinero cocinero) {
-        if (cocinero != null
-                && estado == EstadoFactura.PAGADA
-                && pedido != null
-                && pedido.getEstado() == EstadoPedido.EN_PREPARACION) {
 
-            pedido.cambiarEstado(EstadoPedido.LISTO_PARA_RETIRAR);
+        if (cocinero == null
+                || estado != EstadoFactura.PAGADA
+                || pedido == null
+                || pedido.getEstado() != EstadoPedido.EN_PREPARACION) {
+            return;
         }
+
+        observaciones = "Preparado por: "
+                + cocinero.getNombre()
+                + " | Empleado: "
+                + cocinero.getNumeroEmpleado();
+
+        pedido.cambiarEstado(EstadoPedido.LISTO_PARA_RETIRAR);
     }
-    
+
     
     
     public void mostrarFactura() {
 
         System.out.println("===== FACTURA SODAJAVA =====");
-        System.out.println("Factura N°: " + numeroFactura);
+        System.out.println("Factura No: " + numeroFactura);
         System.out.println("Fecha: " + fecha);
         System.out.println("Cliente: " + cliente.getNombreCompleto());
         System.out.println("Estado: " + estado);

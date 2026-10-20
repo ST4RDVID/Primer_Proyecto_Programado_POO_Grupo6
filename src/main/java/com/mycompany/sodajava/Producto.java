@@ -20,14 +20,20 @@ public class Producto {
 
     // Constructor
 
-    public Producto(String codigo, String nombre, Tamano tamano, String descripcion, double precioUnitario, int cantidadDisponible) {
+    
+    public Producto(String codigo, String nombre, Tamano tamano,String descripcion, double precioUnitario,int cantidadDisponible) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.tamano = tamano;
         this.descripcion = descripcion;
-        this.precioUnitario = precioUnitario;
-        this.cantidadDisponible = cantidadDisponible;
+        this.precioUnitario
+                = Double.isFinite(precioUnitario) && precioUnitario >= 0
+                ? precioUnitario : 0;
+
+        this.cantidadDisponible
+                = Math.max(0, cantidadDisponible);
     }
+
     
 
     // Metodos
@@ -81,9 +87,12 @@ public class Producto {
         return precioUnitario;
     }
 
-    public void setPrecioUnitario(double precioUnitario) {
-        this.precioUnitario = precioUnitario;
+        public void setPrecioUnitario(double precioUnitario) {
+        if (Double.isFinite(precioUnitario) && precioUnitario >= 0) {
+            this.precioUnitario = precioUnitario;
+        }
     }
+
 
     public String getCodigo() {
         return codigo;

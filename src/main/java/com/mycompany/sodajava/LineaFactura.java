@@ -13,6 +13,7 @@ public class LineaFactura {
     private Producto producto;
     private int cantidad;
     private double precioUnitario;
+    private boolean bloqueada = false;
     
     // Constructor
     public LineaFactura(Producto producto, int cantidad, double precioUnitario) {
@@ -26,11 +27,18 @@ public class LineaFactura {
     return cantidad * precioUnitario;
     }
     
+   
     public void modificarCantidad(int cantidad) {
-    if (cantidad > 0) {
-        this.cantidad = cantidad;
-       }
-   }
+        if (!bloqueada && cantidad > 0) {
+            this.cantidad = cantidad;
+        }
+    }
+    
+    
+    public void bloquearLinea() {
+        this.bloqueada = true;
+    }
+
 
     // Getters
     public Producto getProducto() {
