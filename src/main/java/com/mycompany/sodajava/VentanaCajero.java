@@ -9,7 +9,8 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class VentanaCajero extends javax.swing.JFrame {
-    
+    private SistemaSoda sistema;
+    private Empleado empleado;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaCajero.class.getName());
 
     /**
@@ -18,6 +19,12 @@ public class VentanaCajero extends javax.swing.JFrame {
     public VentanaCajero() {
         initComponents();
     }
+    public VentanaCajero(SistemaSoda sistema, Empleado empleado) {
+    this();
+    this.sistema = sistema;
+    this.empleado = empleado;
+    setLocationRelativeTo(null);
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -157,7 +164,9 @@ public class VentanaCajero extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEntregaPedidosActionPerformed
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
-        // TODO add your handling code here:
+       VentanaLogin login = new VentanaLogin(sistema);
+       login.setVisible(true);
+       this.dispose();
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     /**

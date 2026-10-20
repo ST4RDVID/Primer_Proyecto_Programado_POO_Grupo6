@@ -9,7 +9,8 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class VentanaCocina extends javax.swing.JFrame {
-    
+    private SistemaSoda sistema;
+private Empleado empleado;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaCocina.class.getName());
 
     /**
@@ -18,6 +19,12 @@ public class VentanaCocina extends javax.swing.JFrame {
     public VentanaCocina() {
         initComponents();
     }
+    public VentanaCocina(SistemaSoda sistema, Empleado empleado) {
+    this();
+    this.sistema = sistema;
+    this.empleado = empleado;
+    setLocationRelativeTo(null);
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -56,7 +63,7 @@ public class VentanaCocina extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
         jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        btnCerrarSesion = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -264,11 +271,11 @@ public class VentanaCocina extends javax.swing.JFrame {
         jButton4.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jButton4.setText("Marcar listo para retirar");
 
-        jButton5.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jButton5.setText("Cerrar sesión");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        btnCerrarSesion.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        btnCerrarSesion.setText("Cerrar sesión");
+        btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                btnCerrarSesionActionPerformed(evt);
             }
         });
 
@@ -292,7 +299,7 @@ public class VentanaCocina extends javax.swing.JFrame {
                         .addComponent(jButton4)
                         .addGap(372, 372, 372))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton5)
+                        .addComponent(btnCerrarSesion)
                         .addGap(408, 408, 408))))
         );
         jPanel3Layout.setVerticalGroup(
@@ -307,7 +314,7 @@ public class VentanaCocina extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jButton4)
                 .addGap(18, 18, 18)
-                .addComponent(jButton5)
+                .addComponent(btnCerrarSesion)
                 .addContainerGap(312, Short.MAX_VALUE))
         );
 
@@ -364,9 +371,11 @@ public class VentanaCocina extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
+    private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
+        VentanaLogin login = new VentanaLogin(sistema);
+        login.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -394,11 +403,11 @@ public class VentanaCocina extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCerrarSesion;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

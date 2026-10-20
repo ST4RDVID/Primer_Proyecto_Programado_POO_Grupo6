@@ -9,6 +9,7 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class VentanaLogin extends javax.swing.JFrame {
+    private final SistemaSoda sistema;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaLogin.class.getName());
 
@@ -16,8 +17,14 @@ public class VentanaLogin extends javax.swing.JFrame {
      * Creates new form VentanaLogin
      */
     public VentanaLogin() {
-        initComponents();
-    }
+    this(new SistemaSoda());
+}
+
+public VentanaLogin(SistemaSoda sistema) {
+    this.sistema = sistema;
+    initComponents();
+    setLocationRelativeTo(null);
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -134,7 +141,41 @@ public class VentanaLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_txtUsuarioActionPerformed
 
     private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarActionPerformed
-        // TODO add your handling code here:
+        String usuario = txtUsuario.getText().trim();
+String contrasena = new String(txtContrasena.getPassword());
+
+if (usuario.isEmpty() || contrasena.isEmpty()) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this, "Completá el usuario y la contraseña.");
+    return;
+}
+
+Empleado empleado = sistema.iniciarSesion(usuario, contrasena);
+
+if (empleado == null) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this, "Usuario o contraseña incorrectos.");
+    return;
+}
+
+if (empleado instanceof Administrador) {
+    VentanaAdministrador ventana =
+            new VentanaAdministrador(sistema, empleado);
+    ventana.setVisible(true);
+    this.dispose();
+}
+else if (empleado instanceof Cajero) {
+    VentanaCajero ventana =
+            new VentanaCajero(sistema, empleado);
+    ventana.setVisible(true);
+    this.dispose();
+}
+else if (empleado instanceof Cocinero) {
+    VentanaCocina ventana =
+            new VentanaCocina(sistema, empleado);
+    ventana.setVisible(true);
+    this.dispose();
+}
     }//GEN-LAST:event_btnIngresarActionPerformed
 
     /**

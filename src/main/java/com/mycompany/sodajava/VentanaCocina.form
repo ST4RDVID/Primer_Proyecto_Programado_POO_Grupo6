@@ -376,7 +376,7 @@
                                   <EmptySpace min="-2" pref="372" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
-                                  <Component id="jButton5" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnCerrarSesion" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="408" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -395,7 +395,7 @@
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="jButton4" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="jButton5" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnCerrarSesion" min="-2" max="-2" attributes="0"/>
                           <EmptySpace pref="312" max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -508,7 +508,7 @@
                     <Property name="text" type="java.lang.String" value="Marcar listo para retirar"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JButton" name="jButton5">
+                <Component class="javax.swing.JButton" name="btnCerrarSesion">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name=".AppleSystemUIFont" size="13" style="1"/>
@@ -516,7 +516,7 @@
                     <Property name="text" type="java.lang.String" value="Cerrar sesi&#xf3;n"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton5ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCerrarSesionActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
