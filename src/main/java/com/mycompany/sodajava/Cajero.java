@@ -17,9 +17,18 @@ public class Cajero extends Empleado {
     }
     
     //metodos
-    public void marcarPedidoEntregado(Pedido  pedido){
-        
+    
+    public void marcarPedidoEntregado(Pedido pedido) {
+
+        if (pedido == null) {
+            return;
+        }
+
+        if (pedido.getEstado() == EstadoPedido.LISTO_PARA_RETIRAR) {
+            pedido.cambiarEstado(EstadoPedido.ENTREGADO);
+        }
     }
+
             
             
 }

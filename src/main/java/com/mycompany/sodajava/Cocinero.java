@@ -16,8 +16,15 @@ public class Cocinero extends Empleado {
     }
     
     //metodos
-    public void marcarPedidoListo(Factura factura){
-        
+    
+    public void marcarPedidoListo(Factura factura) {
+
+        if (factura == null) {
+            return;
+        }
+
+        factura.registrarPreparacion(this);
     }
+
     
 }

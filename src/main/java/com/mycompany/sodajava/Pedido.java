@@ -53,15 +53,41 @@ public class Pedido {
         return subtotal;
     }
 
-    public void cambiarEstado(EstadoPedido estado) {
-        if (estado != null) {
-            this.estado = estado;
+    
+    public void cambiarEstado(EstadoPedido nuevoEstado) {
+
+        if (nuevoEstado == null) {
+            return;
+        }
+
+        if (estado == EstadoPedido.EN_PREPARACION
+                && nuevoEstado == EstadoPedido.LISTO_PARA_RETIRAR
+                && bloqueado) {
+
+            estado = nuevoEstado;
+
+        } else if (estado == EstadoPedido.LISTO_PARA_RETIRAR
+                && nuevoEstado == EstadoPedido.ENTREGADO) {
+
+            estado = nuevoEstado;
         }
     }
+
+    
     
     public void bloquearPedido() {
-        this.bloqueado = true;
+
+        if (bloqueado) {
+            return;
+        }
+
+        bloqueado = true;
+
+        for (LineaFactura linea : lineas) {
+            linea.bloquearLinea();
+        }
     }
+
 
     public boolean isBloqueado() {
         return bloqueado;
