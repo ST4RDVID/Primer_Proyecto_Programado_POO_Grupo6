@@ -9,7 +9,8 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class VentanaClientes extends javax.swing.JFrame {
-    
+    private SistemaSoda sistema;
+    private Empleado empleado;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaClientes.class.getName());
 
     /**
@@ -18,6 +19,28 @@ public class VentanaClientes extends javax.swing.JFrame {
     public VentanaClientes() {
         initComponents();
     }
+    public VentanaClientes(SistemaSoda sistema, Empleado empleado) {
+    this();
+    this.sistema = sistema;
+    this.empleado = empleado;
+    setLocationRelativeTo(null);
+    cargarClientes();
+}
+    
+    private void cargarClientes() {
+    javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) tblClientes.getModel();
+
+    modelo.setRowCount(0);
+
+    for (Cliente cliente : sistema.getClientes()) {
+        modelo.addRow(new Object[]{
+            cliente.getCodigo(),
+            cliente.getNombreCompleto(),
+            cliente.getTelefono(),
+            cliente.getCorreo()
+        });
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -31,8 +54,8 @@ public class VentanaClientes extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        txtBuscarCliente = new javax.swing.JTextField();
+        btnBuscar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblClientes = new javax.swing.JTable();
         btnHistorialCliente = new javax.swing.JButton();
@@ -47,14 +70,19 @@ public class VentanaClientes extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font(".AppleSystemUIFont", 0, 13)); // NOI18N
         jLabel2.setText("Código del cliente:");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txtBuscarCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txtBuscarClienteActionPerformed(evt);
             }
         });
 
-        jButton1.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jButton1.setText("Buscar");
+        btnBuscar.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
 
         tblClientes.setFont(new java.awt.Font(".AppleSystemUIFont", 0, 13)); // NOI18N
         tblClientes.setModel(new javax.swing.table.DefaultTableModel(
@@ -123,9 +151,9 @@ public class VentanaClientes extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(326, 326, 326)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtBuscarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
+                        .addComponent(btnBuscar))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(72, 72, 72)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 719, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -140,8 +168,8 @@ public class VentanaClientes extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addGap(12, 12, 12)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnBuscar)
+                    .addComponent(txtBuscarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
@@ -172,21 +200,77 @@ public class VentanaClientes extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarClienteActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtBuscarClienteActionPerformed
 
     private void btnHistorialClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialClienteActionPerformed
-        // TODO add your handling code here:
+        int fila = tblClientes.getSelectedRow();
+
+        if (fila == -1) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Seleccioná un cliente de la tabla."
+        );
+        return;
+    }
+
+    String codigo = tblClientes.getValueAt(fila, 0).toString();
+    Cliente cliente = sistema.buscarCliente(codigo);
+
+        if (cliente == null) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "No se encontró el cliente."
+        );
+        return;
+    }
+
+    VentanaHistorialCliente ventana = new VentanaHistorialCliente(sistema, empleado, cliente);
+
+    ventana.setVisible(true);
+    this.dispose();
     }//GEN-LAST:event_btnHistorialClienteActionPerformed
 
     private void btnRegistrarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarClienteActionPerformed
-        // TODO add your handling code here:
+        VentanaRegistrarCliente ventana = new VentanaRegistrarCliente(sistema, empleado);
+
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnRegistrarClienteActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        // TODO add your handling code here:
+        VentanaCajero ventana =new VentanaCajero(sistema, empleado);
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        String codigo = txtBuscarCliente.getText().trim();
+
+        if (codigo.isEmpty()) {
+            cargarClientes();
+            return;
+         }
+
+        Cliente cliente = sistema.buscarCliente(codigo);
+
+        if (cliente == null) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "No se encontró un cliente con ese código.");
+        return;
+        }
+
+        javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel) tblClientes.getModel();
+
+        modelo.setRowCount(0);
+
+        modelo.addRow(new Object[]{
+            cliente.getCodigo(),
+            cliente.getNombreCompleto(),
+            cliente.getTelefono(),
+            cliente.getCorreo()
+        });
+    }//GEN-LAST:event_btnBuscarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -214,15 +298,15 @@ public class VentanaClientes extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnHistorialCliente;
     private javax.swing.JButton btnRegistrarCliente;
     private javax.swing.JButton btnVolver;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTable tblClientes;
+    private javax.swing.JTextField txtBuscarCliente;
     // End of variables declaration//GEN-END:variables
 }

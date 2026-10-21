@@ -9,7 +9,11 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class VentanaFacturacion extends javax.swing.JFrame {
-    
+    private SistemaSoda sistema;
+    private Empleado empleado;
+    private Cliente clienteSeleccionado;
+    private Pedido pedidoActual = new Pedido();
+    private Factura facturaActual;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaFacturacion.class.getName());
 
     /**
@@ -18,6 +22,128 @@ public class VentanaFacturacion extends javax.swing.JFrame {
     public VentanaFacturacion() {
         initComponents();
     }
+    
+public VentanaFacturacion(SistemaSoda sistema, Empleado empleado) {
+    this();
+    this.sistema = sistema;
+    this.empleado = empleado;
+
+    setLocationRelativeTo(null);
+    cargarProductos();
+    actualizarPrecio();
+    actualizarDetallePedido();
+    actualizarEncabezado();
+}
+
+private void cargarProductos() {
+    javax.swing.DefaultComboBoxModel<String> modelo =
+        new javax.swing.DefaultComboBoxModel<>();
+
+    for (Producto producto : sistema.getProductos()) {
+        String nombre = producto.getNombre();
+
+        if (modelo.getIndexOf(nombre) == -1) {
+            modelo.addElement(nombre);
+        }
+    }
+
+    cmbProducto.setModel(modelo);
+}
+private Producto obtenerProductoSeleccionado() {
+    if (sistema == null
+            || cmbProducto.getSelectedItem() == null
+            || cmbTamano.getSelectedItem() == null) {
+        return null;
+    }
+
+    String nombre = cmbProducto.getSelectedItem().toString();
+    String textoTamano = cmbTamano.getSelectedItem().toString();
+
+    Tamano tamano = switch (textoTamano) {
+        case "Pequeño" -> Tamano.PEQUENO;
+        case "Grande" -> Tamano.GRANDE;
+        case "Especial" -> Tamano.ESPECIAL;
+        default -> null;
+    };
+
+    for (Producto producto : sistema.getProductos()) {
+        if (producto.getNombre().equals(nombre)
+                && producto.getTamano() == tamano) {
+            return producto;
+        }
+    }
+
+    return null;
+}
+private void actualizarPrecio() {
+    Producto producto = obtenerProductoSeleccionado();
+
+    if (producto == null) {
+        lblPrecioUnitario.setText("Precio unitario: no disponible");
+        return;
+    }
+
+    lblPrecioUnitario.setText(
+        String.format(
+            "Precio unitario: ₡%,.2f",
+            producto.getPrecioUnitario()
+        )
+    );
+}
+private void actualizarDetallePedido() {
+    javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel)
+        tblLineasFactura.getModel();
+
+    modelo.setRowCount(0);
+
+    for (LineaFactura linea : pedidoActual.getLineas()) {
+        modelo.addRow(new Object[]{
+            linea.getProducto().getNombre(),
+            linea.getProducto().getTamano().toString(),
+            linea.getCantidad(),
+            linea.getPrecioUnitario(),
+            linea.calcularSubtotal()
+        });
+    }
+
+    double subtotal = pedidoActual.calcularSubtotal();
+    double iva = subtotal * 0.13;
+    double total = subtotal + iva;
+
+    lblSubtotal.setText(String.format("Subtotal: ₡%,.2f", subtotal));
+    lblIVA.setText(String.format("IVA (13%%): ₡%,.2f", iva));
+    lblTotal.setText(String.format("Total: ₡%,.2f", total));
+}
+private void actualizarEncabezado() {
+    java.time.format.DateTimeFormatter formato =
+        java.time.format.DateTimeFormatter.ofPattern(
+            "dd/MM/yyyy HH:mm"
+        );
+
+    if (facturaActual == null) {
+        lblNumeroFactura.setText("Número de factura: sin asignar");
+        lblCajero.setText("Cajero: " + empleado.getNombre());
+        lblFechaHora.setText(
+            "Fecha y hora: "
+                + java.time.LocalDateTime.now().format(formato)
+        );
+        lblEstadoFactura.setText("Estado: sin guardar");
+    } else {
+        lblNumeroFactura.setText(
+            "Número de factura: " + facturaActual.getNumeroFactura()
+        );
+        lblCajero.setText(
+            "Cajero: " + facturaActual.getCajero().getNombre()
+        );
+        lblFechaHora.setText(
+            "Fecha y hora: " + facturaActual.getFecha().format(formato)
+        );
+        lblEstadoFactura.setText(
+            "Estado: " + facturaActual.getEstado()
+        );
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -32,33 +158,33 @@ public class VentanaFacturacion extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         lblNumeroFactura = new javax.swing.JLabel();
         lblFechaHora = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        lblCajero = new javax.swing.JLabel();
+        lblEstadoFactura = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txtCodigoCliente = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
+        btnRegistrarCliente = new javax.swing.JButton();
+        lblCliente = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         cmbProducto = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
-        cmbTamaño = new javax.swing.JComboBox<>();
+        cmbTamano = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
         spnCantidad = new javax.swing.JSpinner();
-        jLabel9 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        lblPrecioUnitario = new javax.swing.JLabel();
+        btnAgregar = new javax.swing.JButton();
+        btnModificarLinea = new javax.swing.JButton();
+        btnEliminarLinea = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblLineasFactura = new javax.swing.JTable();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
+        lblSubtotal = new javax.swing.JLabel();
+        lblIVA = new javax.swing.JLabel();
+        lblTotal = new javax.swing.JLabel();
+        btnNuevaFactura = new javax.swing.JButton();
+        btnCargarPendiente = new javax.swing.JButton();
+        btnGuardarPendiente = new javax.swing.JButton();
+        btnCobrar = new javax.swing.JButton();
+        btnVerFactura = new javax.swing.JButton();
         jButton11 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -72,11 +198,11 @@ public class VentanaFacturacion extends javax.swing.JFrame {
         lblFechaHora.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         lblFechaHora.setText("Fecha y hora:");
 
-        jLabel2.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel2.setText("Cajero:");
+        lblCajero.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblCajero.setText("Cajero:");
 
-        jLabel3.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel3.setText("Estado:");
+        lblEstadoFactura.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblEstadoFactura.setText("Estado:");
 
         jLabel4.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel4.setText("Código del cliente:");
@@ -95,28 +221,33 @@ public class VentanaFacturacion extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Registrar cliente");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnRegistrarCliente.setText("Registrar cliente");
+        btnRegistrarCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnRegistrarClienteActionPerformed(evt);
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Helvetica Neue", 0, 18)); // NOI18N
-        jLabel5.setText("Cliente:");
+        lblCliente.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 18)); // NOI18N
+        lblCliente.setText("Cliente:");
 
         jLabel6.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel6.setText("Producto:");
 
         cmbProducto.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbProductoActionPerformed(evt);
+            }
+        });
 
         jLabel7.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel7.setText("Tamaño:");
 
-        cmbTamaño.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pequeño", "Grande", "Especial" }));
-        cmbTamaño.addActionListener(new java.awt.event.ActionListener() {
+        cmbTamano.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pequeño", "Grande", "Especial" }));
+        cmbTamano.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbTamañoActionPerformed(evt);
+                cmbTamanoActionPerformed(evt);
             }
         });
 
@@ -125,24 +256,29 @@ public class VentanaFacturacion extends javax.swing.JFrame {
 
         spnCantidad.setModel(new javax.swing.SpinnerNumberModel(1, null, null, 1));
 
-        jLabel9.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel9.setText("Precio unitario:");
+        lblPrecioUnitario.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblPrecioUnitario.setText("Precio unitario:");
 
-        jButton3.setText("Agregar");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnAgregar.setText("Agregar");
+        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnAgregarActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Modificar línea");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnModificarLinea.setText("Modificar línea");
+        btnModificarLinea.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnModificarLineaActionPerformed(evt);
             }
         });
 
-        jButton5.setText("Eliminar línea");
+        btnEliminarLinea.setText("Eliminar línea");
+        btnEliminarLinea.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarLineaActionPerformed(evt);
+            }
+        });
 
         tblLineasFactura.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -169,66 +305,82 @@ public class VentanaFacturacion extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tblLineasFactura);
 
-        jLabel10.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel10.setText("Subtotal:");
+        lblSubtotal.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblSubtotal.setText("Subtotal:");
 
-        jLabel11.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel11.setText("IVA (13%):");
+        lblIVA.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblIVA.setText("IVA (13%):");
 
-        jLabel12.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel12.setText("Total:");
+        lblTotal.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblTotal.setText("Total:");
 
-        jButton6.setText("Nueva factura");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btnNuevaFactura.setText("Nueva factura");
+        btnNuevaFactura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                btnNuevaFacturaActionPerformed(evt);
             }
         });
 
-        jButton7.setText("Cargar pendiente");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        btnCargarPendiente.setText("Cargar pendiente");
+        btnCargarPendiente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                btnCargarPendienteActionPerformed(evt);
             }
         });
 
-        jButton8.setText("Guardar pendiente");
+        btnGuardarPendiente.setText("Guardar pendiente");
+        btnGuardarPendiente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarPendienteActionPerformed(evt);
+            }
+        });
 
-        jButton9.setText("Cobrar");
+        btnCobrar.setText("Cobrar");
+        btnCobrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCobrarActionPerformed(evt);
+            }
+        });
 
-        jButton10.setText("Ver factura");
+        btnVerFactura.setText("Ver factura");
+        btnVerFactura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVerFacturaActionPerformed(evt);
+            }
+        });
 
         jButton11.setText("Volver");
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(297, 297, 297))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                             .addContainerGap()
-                            .addComponent(jButton3)
+                            .addComponent(btnAgregar)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(jButton4)
+                            .addComponent(btnModificarLinea)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton5)
+                            .addComponent(btnEliminarLinea)
                             .addGap(143, 143, 143))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(239, 239, 239)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lblNumeroFactura)
-                                    .addComponent(jLabel2))
-                                .addGap(134, 134, 134)
+                                    .addComponent(lblCajero))
+                                .addGap(94, 94, 94)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(lblFechaHora)))
+                                    .addComponent(lblFechaHora)
+                                    .addComponent(lblEstadoFactura)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(144, 144, 144)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -236,7 +388,7 @@ public class VentanaFacturacion extends javax.swing.JFrame {
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                                 .addGroup(jPanel1Layout.createSequentialGroup()
-                                                    .addComponent(jLabel5)
+                                                    .addComponent(lblCliente)
                                                     .addGap(88, 88, 88))
                                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                                     .addComponent(jLabel6)
@@ -250,16 +402,16 @@ public class VentanaFacturacion extends javax.swing.JFrame {
                                                         .addComponent(jLabel4)
                                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                         .addComponent(txtCodigoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                    .addComponent(jLabel9))
+                                                    .addComponent(lblPrecioUnitario))
                                                 .addGap(19, 19, 19)))
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addGap(160, 160, 160)
-                                                .addComponent(jButton2))
+                                                .addComponent(btnRegistrarCliente))
                                             .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addComponent(jLabel7)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(cmbTamaño, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(cmbTamano, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(35, 35, 35)
                                                 .addComponent(jLabel8)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -268,29 +420,32 @@ public class VentanaFacturacion extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jButton1)
-                                .addGap(202, 202, 202))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(234, 234, 234)
-                        .addComponent(jLabel10)
-                        .addGap(123, 123, 123)
-                        .addComponent(jLabel11)
-                        .addGap(130, 130, 130)
-                        .addComponent(jLabel12))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(249, 249, 249)
-                        .addComponent(jButton6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton8))
+                                .addGap(202, 202, 202))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(107, 107, 107)
+                                .addComponent(lblSubtotal)
+                                .addGap(135, 135, 135)
+                                .addComponent(lblIVA)
+                                .addGap(86, 86, 86)
+                                .addComponent(lblTotal))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(305, 305, 305)
-                        .addComponent(jButton9)
+                        .addComponent(btnCobrar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton10)
+                        .addComponent(btnVerFactura)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton11)))
-                .addContainerGap(56, Short.MAX_VALUE))
+                        .addComponent(jButton11))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(249, 249, 249)
+                        .addComponent(btnNuevaFactura)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnCargarPendiente)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnGuardarPendiente))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(347, 347, 347)
+                        .addComponent(jLabel1)))
+                .addContainerGap(108, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -303,49 +458,49 @@ public class VentanaFacturacion extends javax.swing.JFrame {
                     .addComponent(lblFechaHora))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
+                    .addComponent(lblCajero)
+                    .addComponent(lblEstadoFactura))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtCodigoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(btnRegistrarCliente))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel5)
+                .addComponent(lblCliente)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(cmbProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
-                    .addComponent(cmbTamaño, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbTamano, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
                     .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel9)
+                .addComponent(lblPrecioUnitario)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4)
-                    .addComponent(jButton5))
+                    .addComponent(btnAgregar)
+                    .addComponent(btnModificarLinea)
+                    .addComponent(btnEliminarLinea))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(jLabel11)
-                    .addComponent(jLabel12))
+                    .addComponent(lblSubtotal)
+                    .addComponent(lblIVA)
+                    .addComponent(lblTotal))
                 .addGap(33, 33, 33)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton6)
-                    .addComponent(jButton7)
-                    .addComponent(jButton8))
+                    .addComponent(btnNuevaFactura)
+                    .addComponent(btnGuardarPendiente)
+                    .addComponent(btnCargarPendiente, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton9)
-                    .addComponent(jButton10)
+                    .addComponent(btnCobrar)
+                    .addComponent(btnVerFactura)
                     .addComponent(jButton11))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -373,32 +528,380 @@ public class VentanaFacturacion extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCodigoClienteActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+       String codigo = txtCodigoCliente.getText().trim();
+
+clienteSeleccionado = null;
+lblCliente.setText("Cliente: sin seleccionar");
+
+if (codigo.isEmpty()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Escribí el código del cliente."
+    );
+    return;
+}
+
+clienteSeleccionado = sistema.buscarCliente(codigo);
+
+if (clienteSeleccionado == null) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "No se encontró un cliente con ese código."
+    );
+    return;
+}
+
+lblCliente.setText(
+    "Cliente: " + clienteSeleccionado.getNombreCompleto()
+);
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void btnRegistrarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarClienteActionPerformed
+        VentanaRegistrarCliente ventana =
+    new VentanaRegistrarCliente(sistema, empleado, this);
 
-    private void cmbTamañoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTamañoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cmbTamañoActionPerformed
+ventana.setVisible(true);
+this.setVisible(false);
+    }//GEN-LAST:event_btnRegistrarClienteActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void cmbTamanoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTamanoActionPerformed
+        actualizarPrecio();
+    }//GEN-LAST:event_cmbTamanoActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        if (pedidoActual.isBloqueado()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "No se puede modificar un pedido pagado."
+    );
+    return;
+}
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
+Producto producto = obtenerProductoSeleccionado();
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton7ActionPerformed
+if (producto == null) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná un producto y tamaño disponibles."
+    );
+    return;
+}
+
+try {
+    spnCantidad.commitEdit();
+} catch (java.text.ParseException ex) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Escribí una cantidad válida."
+    );
+    return;
+}
+
+int cantidad = ((Number) spnCantidad.getValue()).intValue();
+
+if (cantidad <= 0) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "La cantidad debe ser mayor que cero."
+    );
+    return;
+}
+
+LineaFactura linea = new LineaFactura(
+    producto, cantidad, producto.getPrecioUnitario()
+);
+
+pedidoActual.agregarLinea(linea);
+actualizarDetallePedido();
+    }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void btnModificarLineaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarLineaActionPerformed
+        if (pedidoActual.isBloqueado()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "No se puede modificar un pedido pagado."
+    );
+    return;
+}
+
+int fila = tblLineasFactura.getSelectedRow();
+
+if (fila == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná una línea de la tabla."
+    );
+    return;
+}
+
+try {
+    spnCantidad.commitEdit();
+} catch (java.text.ParseException ex) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Escribí una cantidad válida."
+    );
+    return;
+}
+
+int cantidad = ((Number) spnCantidad.getValue()).intValue();
+
+if (cantidad <= 0) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "La cantidad debe ser mayor que cero."
+    );
+    return;
+}
+
+int indice = tblLineasFactura.convertRowIndexToModel(fila);
+LineaFactura linea = pedidoActual.getLineas().get(indice);
+
+pedidoActual.modificarLinea(linea, cantidad);
+actualizarDetallePedido();
+    }//GEN-LAST:event_btnModificarLineaActionPerformed
+
+    private void btnNuevaFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevaFacturaActionPerformed
+        int respuesta = javax.swing.JOptionPane.showConfirmDialog(
+    this,
+    "¿Empezar una nueva factura? "
+        + "El pedido que no hayas guardado se perderá.",
+    "Nueva factura",
+    javax.swing.JOptionPane.YES_NO_OPTION
+);
+
+if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
+    return;
+}
+
+facturaActual = null;
+pedidoActual = new Pedido();
+clienteSeleccionado = null;
+
+txtCodigoCliente.setText("");
+lblCliente.setText("Cliente: sin seleccionar");
+lblNumeroFactura.setText("Número de factura: sin asignar");
+spnCantidad.setValue(1);
+
+actualizarDetallePedido();
+actualizarPrecio();
+    }//GEN-LAST:event_btnNuevaFacturaActionPerformed
+
+    private void btnCargarPendienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarPendienteActionPerformed
+        String entrada = javax.swing.JOptionPane.showInputDialog(
+    this, "Número de la factura pendiente:"
+);
+
+if (entrada == null) {
+    return;
+}
+
+int numero;
+
+try {
+    numero = Integer.parseInt(entrada.trim());
+} catch (NumberFormatException ex) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Escribí un número de factura válido."
+    );
+    return;
+}
+
+Factura encontrada = sistema.buscarFactura(numero);
+
+if (encontrada == null) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "No se encontró esa factura."
+    );
+    return;
+}
+
+if (encontrada.getEstado() != EstadoFactura.PENDIENTE) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Esa factura ya está pagada."
+    );
+    return;
+}
+
+int respuesta = javax.swing.JOptionPane.showConfirmDialog(
+    this,
+    "¿Cargar esta factura y reemplazar el pedido que ves?",
+    "Cargar pendiente",
+    javax.swing.JOptionPane.YES_NO_OPTION
+);
+
+if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
+    return;
+}
+
+facturaActual = encontrada;
+pedidoActual = encontrada.getPedido();
+clienteSeleccionado = encontrada.getCliente();
+
+txtCodigoCliente.setText(clienteSeleccionado.getCodigo());
+
+lblCliente.setText(
+    "Cliente: " + clienteSeleccionado.getNombreCompleto()
+);
+
+lblNumeroFactura.setText(
+    "Número de factura: " + encontrada.getNumeroFactura()
+);
+
+actualizarDetallePedido();
+    }//GEN-LAST:event_btnCargarPendienteActionPerformed
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        VentanaCajero ventana = new VentanaCajero(sistema, empleado);
+
+    ventana.setVisible(true);
+    this.dispose();
+    }//GEN-LAST:event_jButton11ActionPerformed
+
+    private void cmbProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbProductoActionPerformed
+        actualizarPrecio();
+    }//GEN-LAST:event_cmbProductoActionPerformed
+
+    private void btnEliminarLineaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarLineaActionPerformed
+        if (pedidoActual.isBloqueado()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "No se puede modificar un pedido pagado."
+    );
+    return;
+}
+
+int fila = tblLineasFactura.getSelectedRow();
+
+if (fila == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná una línea de la tabla."
+    );
+    return;
+}
+
+int indice = tblLineasFactura.convertRowIndexToModel(fila);
+
+LineaFactura linea = pedidoActual.getLineas().get(indice);
+pedidoActual.eliminarLinea(linea);
+
+actualizarDetallePedido();
+    }//GEN-LAST:event_btnEliminarLineaActionPerformed
+
+    private void btnGuardarPendienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarPendienteActionPerformed
+        if (pedidoActual.isBloqueado()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Esta factura ya está pagada."
+    );
+    return;
+}
+
+if (clienteSeleccionado == null) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Primero buscá y seleccioná un cliente."
+    );
+    return;
+}
+
+if (pedidoActual.getLineas().isEmpty()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Agregá al menos un producto."
+    );
+    return;
+}
+
+if (!(empleado instanceof Cajero)) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "La factura debe registrarla un cajero."
+    );
+    return;
+}
+
+if (facturaActual == null) {
+    facturaActual = new Factura(
+        0, clienteSeleccionado, (Cajero) empleado,
+        pedidoActual, ""
+    );
+
+    sistema.registrarFactura(facturaActual);
+} else if (!facturaActual.getCliente().getCodigo()
+        .equals(clienteSeleccionado.getCodigo())) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Esta factura pertenece a otro cliente. "
+            + "Volvé a seleccionar su cliente original."
+    );
+    return;
+}
+
+lblNumeroFactura.setText(
+    "Número de factura: " + facturaActual.getNumeroFactura()
+);
+actualizarEncabezado();
+javax.swing.JOptionPane.showMessageDialog(
+    this, "Factura pendiente guardada."
+);
+    }//GEN-LAST:event_btnGuardarPendienteActionPerformed
+
+    private void btnCobrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCobrarActionPerformed
+       if (facturaActual == null) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Primero guardá la factura como pendiente."
+    );
+    return;
+}
+
+if (facturaActual.getEstado() != EstadoFactura.PENDIENTE) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Esta factura ya está pagada."
+    );
+    return;
+}
+
+if (clienteSeleccionado == null
+        || !facturaActual.getCliente().getCodigo()
+            .equals(clienteSeleccionado.getCodigo())) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná el cliente original de esta factura."
+    );
+    return;
+}
+
+int respuesta = javax.swing.JOptionPane.showConfirmDialog(
+    this,
+    String.format(
+        "¿Confirmar el cobro de ₡%,.2f?",
+        facturaActual.calcularTotal()
+    ),
+    "Cobrar factura",
+    javax.swing.JOptionPane.YES_NO_OPTION
+);
+
+if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
+    return;
+}
+
+if (!facturaActual.procesarPago()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "No se pudo cobrar. Revisá que haya productos "
+            + "y suficientes porciones disponibles."
+    );
+    return;
+}
+
+actualizarDetallePedido();
+actualizarEncabezado();
+
+javax.swing.JOptionPane.showMessageDialog(
+    this, "Factura pagada correctamente."
+);
+    }//GEN-LAST:event_btnCobrarActionPerformed
+
+    private void btnVerFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerFacturaActionPerformed
+        if (facturaActual == null) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Primero guardá o cargá una factura."
+    );
+    return;
+}
+
+VentanaDetalleFactura ventana =
+    new VentanaDetalleFactura(
+        sistema, empleado, facturaActual, this
+    );
+
+ventana.setVisible(true);
+this.setVisible(false);
+    }//GEN-LAST:event_btnVerFacturaActionPerformed
+
 
     /**
      * @param args the command line arguments
@@ -426,35 +929,35 @@ public class VentanaFacturacion extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnCargarPendiente;
+    private javax.swing.JButton btnCobrar;
+    private javax.swing.JButton btnEliminarLinea;
+    private javax.swing.JButton btnGuardarPendiente;
+    private javax.swing.JButton btnModificarLinea;
+    private javax.swing.JButton btnNuevaFactura;
+    private javax.swing.JButton btnRegistrarCliente;
+    private javax.swing.JButton btnVerFactura;
     private javax.swing.JComboBox<String> cmbProducto;
-    private javax.swing.JComboBox<String> cmbTamaño;
+    private javax.swing.JComboBox<String> cmbTamano;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblCajero;
+    private javax.swing.JLabel lblCliente;
+    private javax.swing.JLabel lblEstadoFactura;
     private javax.swing.JLabel lblFechaHora;
+    private javax.swing.JLabel lblIVA;
     private javax.swing.JLabel lblNumeroFactura;
+    private javax.swing.JLabel lblPrecioUnitario;
+    private javax.swing.JLabel lblSubtotal;
+    private javax.swing.JLabel lblTotal;
     private javax.swing.JSpinner spnCantidad;
     private javax.swing.JTable tblLineasFactura;
     private javax.swing.JTextField txtCodigoCliente;

@@ -9,16 +9,108 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class VentanaDetalleFactura extends javax.swing.JFrame {
-    
+    private SistemaSoda sistema;
+    private Empleado empleado;
+    private Factura factura;
+    private VentanaFacturacion ventanaOrigen;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaDetalleFactura.class.getName());
 
     /**
      * Creates new form VentanaDetalleFactura
      */
-    public VentanaDetalleFactura() {
-        initComponents();
-    }
+   
+public VentanaDetalleFactura() {
+    initComponents();
+}
 
+public VentanaDetalleFactura(SistemaSoda sistema,
+        Empleado empleado, Factura factura) {
+    this();
+    this.sistema = sistema;
+    this.empleado = empleado;
+    this.factura = factura;
+
+    setLocationRelativeTo(null);
+    cargarDatosFactura();
+}
+private void cargarDatosFactura() {
+    lblNumeroFactura.setText(
+    "Factura N.º: " + factura.getNumeroFactura()
+);
+
+lblFecha.setText("Fecha: " + factura.getFecha().format(
+    java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")
+));
+
+lblHora.setText("Hora: " + factura.getFecha().format(
+    java.time.format.DateTimeFormatter.ofPattern("HH:mm")
+));
+
+lblNombreCliente.setText(
+    "Nombre: " + factura.getCliente().getNombreCompleto()
+);
+
+lblCodigoCliente.setText(
+    "Código: " + factura.getCliente().getCodigo()
+);
+
+lblTelefonoCliente.setText(
+    "Teléfono: " + factura.getCliente().getTelefono()
+);
+
+lblCorreoCliente.setText(
+    "Correo: " + factura.getCliente().getCorreo()
+);
+
+lblCajero.setText(
+    "Cajero: " + factura.getCajero().getNombre()
+);
+
+lblEstadoFactura.setText(
+    "Estado de factura: " + factura.getEstado()
+);
+
+lblEstadoPedido.setText(
+    "Estado del pedido: " + factura.getPedido().getEstado()
+);
+
+lblSubtotal.setText(
+    String.format("Subtotal: ₡%,.2f", factura.calcularSubtotal())
+);
+
+lblIVA.setText(
+    String.format("IVA (13%%): ₡%,.2f", factura.calcularImpuesto())
+);
+
+lblTotal.setText(
+    String.format("Total: ₡%,.2f", factura.calcularTotal())
+);
+txtObservaciones.setText("Observaciones:");
+txtObservacionesFactura.setText(factura.getObservaciones());
+ 
+javax.swing.table.DefaultTableModel modelo =
+    (javax.swing.table.DefaultTableModel) tblDetalleFactura.getModel();
+
+modelo.setRowCount(0);
+
+for (LineaFactura linea : factura.getPedido().getLineas()) {
+    modelo.addRow(new Object[]{
+        linea.getProducto().getNombre(),
+        linea.getProducto().getTamano().toString(),
+        linea.getCantidad(),
+        linea.getPrecioUnitario(),
+        linea.calcularSubtotal()
+    });
+}
+
+}
+public VentanaDetalleFactura(SistemaSoda sistema,
+        Empleado empleado, Factura factura,
+        VentanaFacturacion ventanaOrigen) {
+
+    this(sistema, empleado, factura);
+    this.ventanaOrigen = ventanaOrigen;
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -29,56 +121,56 @@ public class VentanaDetalleFactura extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        lblCorreoCliente = new javax.swing.JLabel();
+        lblCodigoCliente = new javax.swing.JLabel();
+        lblTelefonoCliente = new javax.swing.JLabel();
+        lblNombreCliente = new javax.swing.JLabel();
+        lblHora = new javax.swing.JLabel();
+        lblFecha = new javax.swing.JLabel();
+        lblCajero = new javax.swing.JLabel();
+        lblNumeroFactura = new javax.swing.JLabel();
+        lblEstadoPedido = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblDetalleFactura = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        lblEstadoFactura = new javax.swing.JLabel();
+        txtObservaciones = new javax.swing.JLabel();
+        txtObservacionesFactura = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
+        lblSubtotal = new javax.swing.JLabel();
+        lblIVA = new javax.swing.JLabel();
+        lblTotal = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel9.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel9.setText("Correo:");
+        lblCorreoCliente.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblCorreoCliente.setText("Correo:");
 
-        jLabel8.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel8.setText("Código:");
+        lblCodigoCliente.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblCodigoCliente.setText("Código:");
 
-        jLabel4.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel4.setText("Teléfono:");
+        lblTelefonoCliente.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblTelefonoCliente.setText("Teléfono:");
 
-        jLabel3.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel3.setText("Cliente:");
+        lblNombreCliente.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblNombreCliente.setText("Cliente:");
 
-        jLabel7.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel7.setText("Hora:");
+        lblHora.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblHora.setText("Hora:");
 
-        jLabel6.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel6.setText("Fecha:");
+        lblFecha.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblFecha.setText("Fecha:");
 
-        jLabel5.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel5.setText("Cajero:");
+        lblCajero.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblCajero.setText("Cajero:");
 
-        jLabel2.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel2.setText("Factura:");
+        lblNumeroFactura.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblNumeroFactura.setText("Factura:");
 
-        jLabel11.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel11.setText("Pedido:");
+        lblEstadoPedido.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblEstadoPedido.setText("Pedido:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblDetalleFactura.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -104,20 +196,21 @@ public class VentanaDetalleFactura extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblDetalleFactura);
 
         jLabel1.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 24)); // NOI18N
         jLabel1.setText("Detalle de factura");
 
-        jLabel10.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel10.setText("Factura:");
+        lblEstadoFactura.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblEstadoFactura.setText("Factura:");
 
-        jLabel12.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel12.setText("Observaciones:");
+        txtObservaciones.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        txtObservaciones.setText("Observaciones:");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txtObservacionesFactura.setEditable(false);
+        txtObservacionesFactura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txtObservacionesFacturaActionPerformed(evt);
             }
         });
 
@@ -129,14 +222,14 @@ public class VentanaDetalleFactura extends javax.swing.JFrame {
             }
         });
 
-        jLabel13.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel13.setText("Subtotal:");
+        lblSubtotal.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblSubtotal.setText("Subtotal:");
 
-        jLabel14.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel14.setText("IVA (13%):");
+        lblIVA.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblIVA.setText("IVA (13%):");
 
-        jLabel15.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel15.setText("Total:");
+        lblTotal.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblTotal.setText("Total:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -144,52 +237,60 @@ public class VentanaDetalleFactura extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2))
-                        .addGap(174, 174, 174)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel6))
-                        .addGap(9, 9, 9))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel10))
+                            .addComponent(lblNombreCliente)
+                            .addComponent(lblNumeroFactura))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel11))))
-                .addGap(249, 249, 249))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(174, 174, 174)
+                                .addComponent(lblFecha))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(222, 222, 222)
+                                .addComponent(lblHora)))
+                        .addGap(217, 217, 217))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblTelefonoCliente)
+                            .addComponent(lblCajero)
+                            .addComponent(lblEstadoFactura))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(lblCorreoCliente)
+                                .addComponent(lblEstadoPedido))
+                            .addComponent(lblCodigoCliente, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(201, 201, 201))))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(80, 80, 80)
+                .addComponent(lblSubtotal)
+                .addGap(117, 117, 117)
+                .addComponent(lblIVA)
+                .addGap(132, 132, 132)
+                .addComponent(lblTotal)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(234, 234, 234)
+                        .addGap(287, 287, 287)
                         .addComponent(jLabel1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(103, 103, 103)
+                        .addGap(142, 142, 142)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(325, 325, 325)
-                        .addComponent(jButton1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(309, 309, 309)
-                        .addComponent(jLabel12))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(119, 119, 119)
-                        .addComponent(jLabel13)
-                        .addGap(125, 125, 125)
-                        .addComponent(jLabel14)
-                        .addGap(144, 144, 144)
-                        .addComponent(jLabel15))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(168, 168, 168)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(90, Short.MAX_VALUE))
+                        .addGap(216, 216, 216)
+                        .addComponent(txtObservacionesFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 181, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(376, 376, 376))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(txtObservaciones)
+                .addGap(363, 363, 363))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,35 +299,35 @@ public class VentanaDetalleFactura extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel6))
+                    .addComponent(lblNumeroFactura)
+                    .addComponent(lblFecha))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblNombreCliente)
+                    .addComponent(lblHora))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel9))
+                    .addComponent(lblTelefonoCliente)
+                    .addComponent(lblCodigoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
-                    .addComponent(jLabel10))
+                    .addComponent(lblCajero)
+                    .addComponent(lblCorreoCliente))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblEstadoPedido)
+                    .addComponent(lblEstadoFactura))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(jLabel14)
-                    .addComponent(jLabel15))
-                .addGap(16, 16, 16)
-                .addComponent(jLabel12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblSubtotal)
+                    .addComponent(lblIVA)
+                    .addComponent(lblTotal))
+                .addGap(18, 18, 18)
+                .addComponent(txtObservaciones)
+                .addGap(4, 4, 4)
+                .addComponent(txtObservacionesFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addContainerGap(30, Short.MAX_VALUE))
@@ -237,9 +338,8 @@ public class VentanaDetalleFactura extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(17, 17, 17))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -249,12 +349,23 @@ public class VentanaDetalleFactura extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtObservacionesFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtObservacionesFacturaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtObservacionesFacturaActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+       if (ventanaOrigen != null) {
+    ventanaOrigen.setVisible(true);
+} else {
+    VentanaHistorialCliente ventana =
+        new VentanaHistorialCliente(
+            sistema, empleado, factura.getCliente()
+        );
+
+    ventana.setVisible(true);
+}
+
+this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -285,23 +396,23 @@ public class VentanaDetalleFactura extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel lblCajero;
+    private javax.swing.JLabel lblCodigoCliente;
+    private javax.swing.JLabel lblCorreoCliente;
+    private javax.swing.JLabel lblEstadoFactura;
+    private javax.swing.JLabel lblEstadoPedido;
+    private javax.swing.JLabel lblFecha;
+    private javax.swing.JLabel lblHora;
+    private javax.swing.JLabel lblIVA;
+    private javax.swing.JLabel lblNombreCliente;
+    private javax.swing.JLabel lblNumeroFactura;
+    private javax.swing.JLabel lblSubtotal;
+    private javax.swing.JLabel lblTelefonoCliente;
+    private javax.swing.JLabel lblTotal;
+    private javax.swing.JTable tblDetalleFactura;
+    private javax.swing.JLabel txtObservaciones;
+    private javax.swing.JTextField txtObservacionesFactura;
     // End of variables declaration//GEN-END:variables
 }

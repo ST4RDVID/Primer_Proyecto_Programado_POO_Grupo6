@@ -9,7 +9,9 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class VentanaRegistrarCliente extends javax.swing.JFrame {
-    
+    private SistemaSoda sistema;
+    private Empleado empleado;
+    private VentanaFacturacion ventanaOrigen;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaRegistrarCliente.class.getName());
 
     /**
@@ -18,7 +20,17 @@ public class VentanaRegistrarCliente extends javax.swing.JFrame {
     public VentanaRegistrarCliente() {
         initComponents();
     }
-
+    public VentanaRegistrarCliente(SistemaSoda sistema, Empleado empleado) {
+        this();
+        this.sistema = sistema;
+        this.empleado = empleado;
+        setLocationRelativeTo(null);
+    }
+    public VentanaRegistrarCliente(SistemaSoda sistema,
+        Empleado empleado, VentanaFacturacion ventanaOrigen) {
+    this(sistema, empleado);
+    this.ventanaOrigen = ventanaOrigen;
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -46,8 +58,20 @@ public class VentanaRegistrarCliente extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel2.setText("Nombre completo:");
 
+        txtNombreCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNombreClienteActionPerformed(evt);
+            }
+        });
+
         jLabel3.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel3.setText("Teléfono:");
+
+        txtTelefonoCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTelefonoClienteActionPerformed(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel4.setText("Correo electrónico:");
@@ -68,6 +92,11 @@ public class VentanaRegistrarCliente extends javax.swing.JFrame {
 
         btnCancelar.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -136,8 +165,56 @@ public class VentanaRegistrarCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCorreoClienteActionPerformed
 
     private void btnGuardarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarClienteActionPerformed
-        // TODO add your handling code here:
+        String nombre = txtNombreCliente.getText().trim();
+        String telefono = txtTelefonoCliente.getText().trim();
+        String correo = txtCorreoCliente.getText().trim();
+
+        if (nombre.isEmpty() || telefono.isEmpty() || correo.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(
+            this, "Completá todos los campos."
+        );
+        return;
+       }
+
+    Cliente cliente = new Cliente(nombre, telefono, correo);
+    sistema.registrarCliente(cliente);
+
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Cliente registrado con el código: " + cliente.getCodigo()
+    );
+
+    if (ventanaOrigen != null) {
+    ventanaOrigen.setVisible(true);
+} else {
+    VentanaClientes ventana =
+        new VentanaClientes(sistema, empleado);
+
+    ventana.setVisible(true);
+}
+
+this.dispose();
     }//GEN-LAST:event_btnGuardarClienteActionPerformed
+
+    private void txtNombreClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreClienteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNombreClienteActionPerformed
+
+    private void txtTelefonoClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTelefonoClienteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTelefonoClienteActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+if (ventanaOrigen != null) {
+    ventanaOrigen.setVisible(true);
+} else {
+    VentanaClientes ventana =
+        new VentanaClientes(sistema, empleado);
+
+    ventana.setVisible(true);
+}
+
+this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments

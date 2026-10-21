@@ -9,7 +9,9 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class VentanaHistorialCliente extends javax.swing.JFrame {
-    
+    private SistemaSoda sistema;
+    private Empleado empleado;
+    private Cliente cliente;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaHistorialCliente.class.getName());
 
     /**
@@ -18,7 +20,44 @@ public class VentanaHistorialCliente extends javax.swing.JFrame {
     public VentanaHistorialCliente() {
         initComponents();
     }
+    
+public VentanaHistorialCliente(SistemaSoda sistema,
+        Empleado empleado, Cliente cliente) {
+    this();
+    this.sistema = sistema;
+    this.empleado = empleado;
+    this.cliente = cliente;
 
+    setLocationRelativeTo(null);
+    lblCliente.setText(cliente.getNombreCompleto());
+    setLocationRelativeTo(null);
+    lblCliente.setText(cliente.getNombreCompleto());
+    cargarHistorial();
+}
+private void cargarHistorial() {
+    javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel)
+        tblHistorialCliente.getModel();
+
+    modelo.setRowCount(0);
+
+    java.time.format.DateTimeFormatter formatoFecha =
+        java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    java.time.format.DateTimeFormatter formatoHora =
+        java.time.format.DateTimeFormatter.ofPattern("HH:mm");
+
+    for (Factura factura : sistema.consultarHistorialCliente(cliente)) {
+        modelo.addRow(new Object[]{
+            String.valueOf(factura.getNumeroFactura()),
+            factura.getFecha().format(formatoFecha),
+            factura.getFecha().format(formatoHora),
+            factura.calcularTotal(),
+            factura.getEstado().toString(),
+            factura.getPedido().getEstado().toString()
+        });
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -32,7 +71,7 @@ public class VentanaHistorialCliente extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        lblCliente = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblHistorialCliente = new javax.swing.JTable();
         btnVerDetalleFactura = new javax.swing.JButton();
@@ -56,8 +95,8 @@ public class VentanaHistorialCliente extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 24)); // NOI18N
         jLabel2.setText("Historial del cliente");
 
-        jLabel3.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel3.setText("Cliente:");
+        lblCliente.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblCliente.setText("Cliente:");
 
         tblHistorialCliente.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         tblHistorialCliente.setModel(new javax.swing.table.DefaultTableModel(
@@ -72,7 +111,7 @@ public class VentanaHistorialCliente extends javax.swing.JFrame {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true, true
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -84,6 +123,14 @@ public class VentanaHistorialCliente extends javax.swing.JFrame {
             }
         });
         jScrollPane3.setViewportView(tblHistorialCliente);
+        if (tblHistorialCliente.getColumnModel().getColumnCount() > 0) {
+            tblHistorialCliente.getColumnModel().getColumn(0).setResizable(false);
+            tblHistorialCliente.getColumnModel().getColumn(1).setResizable(false);
+            tblHistorialCliente.getColumnModel().getColumn(2).setResizable(false);
+            tblHistorialCliente.getColumnModel().getColumn(3).setResizable(false);
+            tblHistorialCliente.getColumnModel().getColumn(4).setResizable(false);
+            tblHistorialCliente.getColumnModel().getColumn(5).setResizable(false);
+        }
 
         btnVerDetalleFactura.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         btnVerDetalleFactura.setText("Ver detalle de factura");
@@ -116,7 +163,7 @@ public class VentanaHistorialCliente extends javax.swing.JFrame {
                         .addComponent(jLabel2))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(407, 407, 407)
-                        .addComponent(jLabel3))
+                        .addComponent(lblCliente))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(285, 285, 285)
                         .addComponent(btnVerDetalleFactura)
@@ -130,7 +177,7 @@ public class VentanaHistorialCliente extends javax.swing.JFrame {
                 .addGap(44, 44, 44)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel3)
+                .addComponent(lblCliente)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -167,11 +214,41 @@ public class VentanaHistorialCliente extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVerDetalleFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerDetalleFacturaActionPerformed
-        // TODO add your handling code here:
+        int fila = tblHistorialCliente.getSelectedRow();
+
+    if (fila == -1) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Seleccioná una factura de la tabla."
+        );
+        return;
+    }
+
+    int numero = Integer.parseInt(
+        tblHistorialCliente.getValueAt(fila, 0).toString()
+    );
+
+    Factura factura = sistema.buscarFactura(numero);
+
+    if (factura == null) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "No se encontró la factura."
+        );
+        return;
+    }
+
+    VentanaDetalleFactura ventana =
+        new VentanaDetalleFactura(sistema, empleado, factura);
+
+    ventana.setVisible(true);
+    this.dispose();
     }//GEN-LAST:event_btnVerDetalleFacturaActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        // TODO add your handling code here:
+        VentanaClientes ventana =
+        new VentanaClientes(sistema, empleado);
+
+    ventana.setVisible(true);
+    this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
 
     /**
@@ -204,10 +281,10 @@ public class VentanaHistorialCliente extends javax.swing.JFrame {
     private javax.swing.JButton btnVolver;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel lblCliente;
     private javax.swing.JTable tblHistorialCliente;
     // End of variables declaration//GEN-END:variables
 }

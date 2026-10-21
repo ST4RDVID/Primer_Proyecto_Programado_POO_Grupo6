@@ -148,7 +148,9 @@ public class VentanaCajero extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClientesActionPerformed
-        // TODO add your handling code here:
+        VentanaClientes ventana = new VentanaClientes(sistema, empleado);
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnClientesActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -156,7 +158,11 @@ public class VentanaCajero extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void btnFacturacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFacturacionActionPerformed
-        // TODO add your handling code here:
+        VentanaFacturacion ventana =
+        new VentanaFacturacion(sistema, empleado);
+
+    ventana.setVisible(true);
+    this.dispose();
     }//GEN-LAST:event_btnFacturacionActionPerformed
 
     private void btnEntregaPedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntregaPedidosActionPerformed
