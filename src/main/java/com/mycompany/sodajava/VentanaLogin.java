@@ -16,8 +16,11 @@ public class VentanaLogin extends javax.swing.JFrame {
     /**
      * Creates new form VentanaLogin
      */
-    public VentanaLogin() {
+public VentanaLogin() {
     this(new SistemaSoda());
+
+    VentanaOrdenes ordenes = new VentanaOrdenes(sistema);
+    ordenes.setVisible(true);
 }
 
 public VentanaLogin(SistemaSoda sistema) {

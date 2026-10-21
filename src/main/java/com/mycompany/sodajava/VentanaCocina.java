@@ -10,7 +10,7 @@ package com.mycompany.sodajava;
  */
 public class VentanaCocina extends javax.swing.JFrame {
     private SistemaSoda sistema;
-private Empleado empleado;
+    private Empleado empleado;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaCocina.class.getName());
 
     /**
@@ -24,8 +24,75 @@ private Empleado empleado;
     this.sistema = sistema;
     this.empleado = empleado;
     setLocationRelativeTo(null);
+    cargarPedidosCocina();
+    tblPedidosCocina.getSelectionModel()
+    .addListSelectionListener(evento -> {
+        if (!evento.getValueIsAdjusting()) {
+            mostrarProductosOrden();
+        }
+    });
 }
+private void cargarPedidosCocina() {
+    javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel)
+        tblPedidosCocina.getModel();
 
+    modelo.setRowCount(0);
+
+    javax.swing.table.DefaultTableModel detalle =
+        (javax.swing.table.DefaultTableModel)
+        tblProductosOrden.getModel();
+
+    detalle.setRowCount(0);
+
+    java.time.format.DateTimeFormatter formatoHora =
+        java.time.format.DateTimeFormatter.ofPattern("HH:mm");
+
+    for (Factura factura : sistema.getFacturas()) {
+        if (factura.getEstado() == EstadoFactura.PAGADA
+                && factura.getPedido().getEstado()
+                    == EstadoPedido.EN_PREPARACION) {
+
+            modelo.addRow(new Object[]{
+                String.valueOf(factura.getNumeroFactura()),
+                factura.getCliente().getNombreCompleto(),
+                factura.getFecha().format(formatoHora),
+                factura.getPedido().getEstado().toString()
+            });
+        }
+    }
+}
+private void mostrarProductosOrden() {
+    javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel)
+        tblProductosOrden.getModel();
+
+    modelo.setRowCount(0);
+
+    int fila = tblPedidosCocina.getSelectedRow();
+
+    if (fila == -1) {
+        return;
+    }
+
+    int numero = Integer.parseInt(
+        tblPedidosCocina.getValueAt(fila, 0).toString()
+    );
+
+    Factura factura = sistema.buscarFactura(numero);
+
+    if (factura == null) {
+        return;
+    }
+
+    for (LineaFactura linea : factura.getPedido().getLineas()) {
+        modelo.addRow(new Object[]{
+            linea.getProducto().getNombre(),
+            linea.getProducto().getTamano().toString(),
+            linea.getCantidad()
+        });
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -55,14 +122,14 @@ private Empleado empleado;
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblProductos = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tblPedidosCocina = new javax.swing.JTable();
         jLabel8 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
-        jButton4 = new javax.swing.JButton();
+        tblProductosOrden = new javax.swing.JTable();
+        btnMarcarListo = new javax.swing.JButton();
         btnCerrarSesion = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -102,7 +169,7 @@ private Empleado empleado;
 
         jButton3.setText("Eliminar producto");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -125,7 +192,7 @@ private Empleado empleado;
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblProductos);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -146,8 +213,7 @@ private Empleado empleado;
                                 .addGap(37, 37, 37)
                                 .addComponent(jButton2)
                                 .addGap(32, 32, 32)
-                                .addComponent(jButton3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(jButton3))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -215,7 +281,7 @@ private Empleado empleado;
 
         jTabbedPane1.addTab("Productos y porciones", jPanel2);
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblPedidosCocina.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -238,12 +304,12 @@ private Empleado empleado;
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(tblPedidosCocina);
 
         jLabel8.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 18)); // NOI18N
         jLabel8.setText("Productos de la orden seleccionada:");
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        tblProductosOrden.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -266,10 +332,15 @@ private Empleado empleado;
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(jTable3);
+        jScrollPane3.setViewportView(tblProductosOrden);
 
-        jButton4.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jButton4.setText("Marcar listo para retirar");
+        btnMarcarListo.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        btnMarcarListo.setText("Marcar listo para retirar");
+        btnMarcarListo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMarcarListoActionPerformed(evt);
+            }
+        });
 
         btnCerrarSesion.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         btnCerrarSesion.setText("Cerrar sesión");
@@ -296,7 +367,7 @@ private Empleado empleado;
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(245, 245, 245))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton4)
+                        .addComponent(btnMarcarListo)
                         .addGap(372, 372, 372))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addComponent(btnCerrarSesion)
@@ -312,7 +383,7 @@ private Empleado empleado;
                 .addGap(34, 34, 34)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton4)
+                .addComponent(btnMarcarListo)
                 .addGap(18, 18, 18)
                 .addComponent(btnCerrarSesion)
                 .addContainerGap(312, Short.MAX_VALUE))
@@ -377,6 +448,48 @@ private Empleado empleado;
         this.dispose();
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
+    private void btnMarcarListoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMarcarListoActionPerformed
+        if (!(empleado instanceof Cocinero)) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Solo un cocinero puede preparar pedidos."
+    );
+    return;
+}
+
+int fila = tblPedidosCocina.getSelectedRow();
+
+if (fila == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná un pedido de la tabla."
+    );
+    return;
+}
+
+int numero = Integer.parseInt(
+    tblPedidosCocina.getValueAt(fila, 0).toString()
+);
+
+Factura factura = sistema.buscarFactura(numero);
+
+if (factura == null
+        || factura.getEstado() != EstadoFactura.PAGADA
+        || factura.getPedido().getEstado()
+            != EstadoPedido.EN_PREPARACION) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "El pedido ya no está disponible para preparar."
+    );
+    cargarPedidosCocina();
+    return;
+}
+
+factura.registrarPreparacion((Cocinero) empleado);
+cargarPedidosCocina();
+
+javax.swing.JOptionPane.showMessageDialog(
+    this, "Pedido listo para retirar."
+);
+    }//GEN-LAST:event_btnMarcarListoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -404,10 +517,10 @@ private Empleado empleado;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCerrarSesion;
+    private javax.swing.JButton btnMarcarListo;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -425,12 +538,12 @@ private Empleado empleado;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTable jTable3;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
+    private javax.swing.JTable tblPedidosCocina;
+    private javax.swing.JTable tblProductos;
+    private javax.swing.JTable tblProductosOrden;
     // End of variables declaration//GEN-END:variables
 }

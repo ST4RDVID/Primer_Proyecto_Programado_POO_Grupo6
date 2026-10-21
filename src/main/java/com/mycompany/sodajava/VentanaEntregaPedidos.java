@@ -9,7 +9,8 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class VentanaEntregaPedidos extends javax.swing.JFrame {
-    
+    private SistemaSoda sistema;
+    private Empleado empleado;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaEntregaPedidos.class.getName());
 
     /**
@@ -18,7 +19,15 @@ public class VentanaEntregaPedidos extends javax.swing.JFrame {
     public VentanaEntregaPedidos() {
         initComponents();
     }
+public VentanaEntregaPedidos(SistemaSoda sistema,
+        Empleado empleado) {
+    this();
+    this.sistema = sistema;
+    this.empleado = empleado;
 
+    setLocationRelativeTo(null);
+    cargarPedidosEntrega();
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -32,8 +41,8 @@ public class VentanaEntregaPedidos extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPedidosEntrega = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnMarcarEntregado = new javax.swing.JButton();
+        btnVolver = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,14 +77,19 @@ public class VentanaEntregaPedidos extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tblPedidosEntrega);
 
-        jButton1.setText("Marcar como entregado");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnMarcarEntregado.setText("Marcar como entregado");
+        btnMarcarEntregado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnMarcarEntregadoActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Volver");
+        btnVolver.setText("Volver");
+        btnVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVolverActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -92,9 +106,9 @@ public class VentanaEntregaPedidos extends javax.swing.JFrame {
                         .addComponent(jLabel1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(143, 143, 143)
-                        .addComponent(jButton1)
+                        .addComponent(btnMarcarEntregado)
                         .addGap(128, 128, 128)
-                        .addComponent(jButton2)))
+                        .addComponent(btnVolver)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -106,8 +120,8 @@ public class VentanaEntregaPedidos extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(btnMarcarEntregado)
+                    .addComponent(btnVolver))
                 .addContainerGap(41, Short.MAX_VALUE))
         );
 
@@ -131,10 +145,79 @@ public class VentanaEntregaPedidos extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btnMarcarEntregadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMarcarEntregadoActionPerformed
+        if (!(empleado instanceof Cajero)) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Solo un cajero puede entregar pedidos."
+    );
+    return;
+}
 
+int fila = tblPedidosEntrega.getSelectedRow();
+
+if (fila == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná un pedido de la tabla."
+    );
+    return;
+}
+
+int numero = Integer.parseInt(
+    tblPedidosEntrega.getValueAt(fila, 0).toString()
+);
+
+Factura factura = sistema.buscarFactura(numero);
+
+if (factura == null
+        || factura.getEstado() != EstadoFactura.PAGADA
+        || factura.getPedido().getEstado()
+            != EstadoPedido.LISTO_PARA_RETIRAR) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "El pedido no está listo para entregar."
+    );
+    cargarPedidosEntrega();
+    return;
+}
+
+factura.getPedido().cambiarEstado(EstadoPedido.ENTREGADO);
+cargarPedidosEntrega();
+
+javax.swing.JOptionPane.showMessageDialog(
+    this, "Pedido entregado correctamente."
+);
+    }//GEN-LAST:event_btnMarcarEntregadoActionPerformed
+
+    private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
+       VentanaCajero ventana =
+    new VentanaCajero(sistema, empleado);
+
+ventana.setVisible(true);
+this.dispose();
+    }//GEN-LAST:event_btnVolverActionPerformed
+private void cargarPedidosEntrega() {
+    javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel)
+        tblPedidosEntrega.getModel();
+
+    modelo.setRowCount(0);
+
+    java.time.format.DateTimeFormatter formatoHora =
+        java.time.format.DateTimeFormatter.ofPattern("HH:mm");
+
+    for (Factura factura : sistema.getFacturas()) {
+        if (factura.getEstado() == EstadoFactura.PAGADA
+                && factura.getPedido().getEstado()
+                    == EstadoPedido.LISTO_PARA_RETIRAR) {
+
+            modelo.addRow(new Object[]{
+                String.valueOf(factura.getNumeroFactura()),
+                factura.getCliente().getNombreCompleto(),
+                factura.getFecha().format(formatoHora),
+                factura.getPedido().getEstado().toString()
+            });
+        }
+    }
+}
     /**
      * @param args the command line arguments
      */
@@ -161,8 +244,8 @@ public class VentanaEntregaPedidos extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btnMarcarEntregado;
+    private javax.swing.JButton btnVolver;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

@@ -9,7 +9,8 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class VentanaOrdenes extends javax.swing.JFrame {
-    
+    private SistemaSoda sistema;
+    private javax.swing.Timer temporizador;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaOrdenes.class.getName());
 
     /**
@@ -18,7 +19,70 @@ public class VentanaOrdenes extends javax.swing.JFrame {
     public VentanaOrdenes() {
         initComponents();
     }
+public VentanaOrdenes(SistemaSoda sistema) {
+    this();
+    this.sistema = sistema;
 
+    actualizarOrdenes();
+    setLocationRelativeTo(null);
+
+    setDefaultCloseOperation(
+        javax.swing.WindowConstants.DISPOSE_ON_CLOSE
+    );
+
+    temporizador = new javax.swing.Timer(
+        1000, evento -> actualizarOrdenes()
+    );
+
+    addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowClosed(java.awt.event.WindowEvent evento) {
+            temporizador.stop();
+        }
+    });
+
+    temporizador.start();
+}
+private void actualizarOrdenes() {
+    javax.swing.table.DefaultTableModel preparacion =
+        (javax.swing.table.DefaultTableModel)
+        tblEnPreparacion.getModel();
+
+    javax.swing.table.DefaultTableModel listas =
+        (javax.swing.table.DefaultTableModel)
+        tblListasRetirar.getModel();
+
+    preparacion.setRowCount(0);
+    listas.setRowCount(0);
+
+    for (Factura factura : sistema.getFacturas()) {
+        if (factura.getEstado() != EstadoFactura.PAGADA) {
+            continue;
+        }
+
+        EstadoPedido estado = factura.getPedido().getEstado();
+
+        javax.swing.table.DefaultTableModel destino;
+
+        if (estado == EstadoPedido.EN_PREPARACION) {
+            destino = preparacion;
+        } else if (estado == EstadoPedido.LISTO_PARA_RETIRAR) {
+            destino = listas;
+        } else {
+            continue;
+        }
+
+        for (LineaFactura linea : factura.getPedido().getLineas()) {
+            destino.addRow(new Object[]{
+                String.valueOf(factura.getNumeroFactura()),
+                factura.getCliente().getNombreCompleto(),
+                linea.getProducto().getNombre(),
+                linea.getProducto().getTamano().toString(),
+                linea.getCantidad()
+            });
+        }
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -32,10 +96,10 @@ public class VentanaOrdenes extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblEnPreparacion = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tblListasRetirar = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -45,7 +109,7 @@ public class VentanaOrdenes extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel2.setText("En preparación:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblEnPreparacion.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -68,12 +132,12 @@ public class VentanaOrdenes extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblEnPreparacion);
 
         jLabel3.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel3.setText("Listas para retirar:");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblListasRetirar.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -96,7 +160,7 @@ public class VentanaOrdenes extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(tblListasRetirar);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -191,7 +255,7 @@ public class VentanaOrdenes extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
+    private javax.swing.JTable tblEnPreparacion;
+    private javax.swing.JTable tblListasRetirar;
     // End of variables declaration//GEN-END:variables
 }
