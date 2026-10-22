@@ -162,7 +162,7 @@ private void actualizarEncabezado() {
         lblEstadoFactura = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txtCodigoCliente = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        btnBuscarCliente = new javax.swing.JButton();
         btnRegistrarCliente = new javax.swing.JButton();
         lblCliente = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -214,10 +214,10 @@ private void actualizarEncabezado() {
             }
         });
 
-        jButton1.setText("Buscar cliente");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnBuscarCliente.setText("Buscar cliente");
+        btnBuscarCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnBuscarClienteActionPerformed(evt);
             }
         });
 
@@ -419,7 +419,7 @@ private void actualizarEncabezado() {
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 595, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jButton1)
+                                .addComponent(btnBuscarCliente)
                                 .addGap(202, 202, 202))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(107, 107, 107)
@@ -464,7 +464,7 @@ private void actualizarEncabezado() {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtCodigoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)
+                    .addComponent(btnBuscarCliente)
                     .addComponent(btnRegistrarCliente))
                 .addGap(18, 18, 18)
                 .addComponent(lblCliente)
@@ -528,32 +528,32 @@ private void actualizarEncabezado() {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCodigoClienteActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarClienteActionPerformed
        String codigo = txtCodigoCliente.getText().trim();
 
-clienteSeleccionado = null;
-lblCliente.setText("Cliente: sin seleccionar");
+        clienteSeleccionado = null;
+        lblCliente.setText("Cliente: sin seleccionar");
 
-if (codigo.isEmpty()) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Escribí el código del cliente."
-    );
-    return;
-}
+        if (codigo.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Escribí el código del cliente."
+        );
+        return;
+    }
 
-clienteSeleccionado = sistema.buscarCliente(codigo);
+    clienteSeleccionado = sistema.buscarCliente(codigo);
 
-if (clienteSeleccionado == null) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "No se encontró un cliente con ese código."
-    );
-    return;
-}
+    if (clienteSeleccionado == null) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "No se encontró un cliente con ese código."
+        );
+        return;
+    }
 
 lblCliente.setText(
     "Cliente: " + clienteSeleccionado.getNombreCompleto()
 );
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnBuscarClienteActionPerformed
 
     private void btnRegistrarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarClienteActionPerformed
         VentanaRegistrarCliente ventana =
@@ -573,41 +573,41 @@ this.setVisible(false);
         this, "No se puede modificar un pedido pagado."
     );
     return;
-}
+    }
 
-Producto producto = obtenerProductoSeleccionado();
+    Producto producto = obtenerProductoSeleccionado();
 
-if (producto == null) {
+    if (producto == null) {
     javax.swing.JOptionPane.showMessageDialog(
         this, "Seleccioná un producto y tamaño disponibles."
     );
     return;
 }
 
-try {
-    spnCantidad.commitEdit();
-} catch (java.text.ParseException ex) {
-    javax.swing.JOptionPane.showMessageDialog(
+    try {
+        spnCantidad.commitEdit();
+    } catch (java.text.ParseException ex) {
+        javax.swing.JOptionPane.showMessageDialog(
         this, "Escribí una cantidad válida."
     );
     return;
 }
 
-int cantidad = ((Number) spnCantidad.getValue()).intValue();
+    int cantidad = ((Number) spnCantidad.getValue()).intValue();
 
-if (cantidad <= 0) {
+    if (cantidad <= 0) {
     javax.swing.JOptionPane.showMessageDialog(
         this, "La cantidad debe ser mayor que cero."
     );
     return;
 }
 
-LineaFactura linea = new LineaFactura(
-    producto, cantidad, producto.getPrecioUnitario()
+    LineaFactura linea = new LineaFactura(
+        producto, cantidad, producto.getPrecioUnitario()
 );
 
-pedidoActual.agregarLinea(linea);
-actualizarDetallePedido();
+    pedidoActual.agregarLinea(linea);
+    actualizarDetallePedido();
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnModificarLineaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarLineaActionPerformed
@@ -618,16 +618,16 @@ actualizarDetallePedido();
     return;
 }
 
-int fila = tblLineasFactura.getSelectedRow();
+    int fila = tblLineasFactura.getSelectedRow();
 
-if (fila == -1) {
+    if (fila == -1) {
     javax.swing.JOptionPane.showMessageDialog(
         this, "Seleccioná una línea de la tabla."
     );
     return;
 }
 
-try {
+    try {
     spnCantidad.commitEdit();
 } catch (java.text.ParseException ex) {
     javax.swing.JOptionPane.showMessageDialog(
@@ -636,110 +636,105 @@ try {
     return;
 }
 
-int cantidad = ((Number) spnCantidad.getValue()).intValue();
+    int cantidad = ((Number) spnCantidad.getValue()).intValue();
 
-if (cantidad <= 0) {
+    if (cantidad <= 0) {
     javax.swing.JOptionPane.showMessageDialog(
         this, "La cantidad debe ser mayor que cero."
     );
     return;
 }
 
-int indice = tblLineasFactura.convertRowIndexToModel(fila);
-LineaFactura linea = pedidoActual.getLineas().get(indice);
+    int indice = tblLineasFactura.convertRowIndexToModel(fila);
+    LineaFactura linea = pedidoActual.getLineas().get(indice);
 
-pedidoActual.modificarLinea(linea, cantidad);
-actualizarDetallePedido();
+    pedidoActual.modificarLinea(linea, cantidad);
+    actualizarDetallePedido();
     }//GEN-LAST:event_btnModificarLineaActionPerformed
 
     private void btnNuevaFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevaFacturaActionPerformed
         int respuesta = javax.swing.JOptionPane.showConfirmDialog(
     this,
-    "¿Empezar una nueva factura? "
-        + "El pedido que no hayas guardado se perderá.",
-    "Nueva factura",
+    "¿Empezar una nueva factura? "+ "El pedido que no hayas guardado se perderá.","Nueva factura",
     javax.swing.JOptionPane.YES_NO_OPTION
-);
+    );
 
-if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
-    return;
-}
+    if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
+        return;
+    }
 
-facturaActual = null;
-pedidoActual = new Pedido();
-clienteSeleccionado = null;
+    facturaActual = null;
+    pedidoActual = new Pedido();
+    clienteSeleccionado = null;
 
-txtCodigoCliente.setText("");
-lblCliente.setText("Cliente: sin seleccionar");
-lblNumeroFactura.setText("Número de factura: sin asignar");
-spnCantidad.setValue(1);
+    txtCodigoCliente.setText("");
+    lblCliente.setText("Cliente: sin seleccionar");
+    lblNumeroFactura.setText("Número de factura: sin asignar");
+    spnCantidad.setValue(1);
 
-actualizarDetallePedido();
-actualizarPrecio();
+    actualizarDetallePedido();
+    actualizarPrecio();
     }//GEN-LAST:event_btnNuevaFacturaActionPerformed
 
     private void btnCargarPendienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarPendienteActionPerformed
         String entrada = javax.swing.JOptionPane.showInputDialog(
     this, "Número de la factura pendiente:"
-);
+    );
 
-if (entrada == null) {
-    return;
-}
+    if (entrada == null) {
+        return;
+    }
 
-int numero;
+    int numero;
 
-try {
-    numero = Integer.parseInt(entrada.trim());
-} catch (NumberFormatException ex) {
-    javax.swing.JOptionPane.showMessageDialog(
+    try {
+        numero = Integer.parseInt(entrada.trim());
+    } catch (NumberFormatException ex) {
+        javax.swing.JOptionPane.showMessageDialog(
         this, "Escribí un número de factura válido."
+        );
+        return;
+    }
+
+    Factura encontrada = sistema.buscarFactura(numero);
+
+    if (encontrada == null) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "No se encontró esa factura."
+        );
+        return;
+    }
+
+    if (encontrada.getEstado() != EstadoFactura.PENDIENTE) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Esa factura ya está pagada."
+        );
+        return;
+    }
+
+    int respuesta = javax.swing.JOptionPane.showConfirmDialog(
+        this,
+        "¿Cargar esta factura y reemplazar el pedido que ves?","Cargar pendiente",
+        javax.swing.JOptionPane.YES_NO_OPTION
     );
-    return;
-}
 
-Factura encontrada = sistema.buscarFactura(numero);
+    if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
+        return;
+    }
 
-if (encontrada == null) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "No se encontró esa factura."
+    facturaActual = encontrada;
+    pedidoActual = encontrada.getPedido();
+    clienteSeleccionado = encontrada.getCliente();
+
+    txtCodigoCliente.setText(clienteSeleccionado.getCodigo());
+
+    lblCliente.setText("Cliente: " + clienteSeleccionado.getNombreCompleto()
     );
-    return;
-}
 
-if (encontrada.getEstado() != EstadoFactura.PENDIENTE) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Esa factura ya está pagada."
+    lblNumeroFactura.setText("Número de factura: " + encontrada.getNumeroFactura()
     );
-    return;
-}
 
-int respuesta = javax.swing.JOptionPane.showConfirmDialog(
-    this,
-    "¿Cargar esta factura y reemplazar el pedido que ves?",
-    "Cargar pendiente",
-    javax.swing.JOptionPane.YES_NO_OPTION
-);
-
-if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
-    return;
-}
-
-facturaActual = encontrada;
-pedidoActual = encontrada.getPedido();
-clienteSeleccionado = encontrada.getCliente();
-
-txtCodigoCliente.setText(clienteSeleccionado.getCodigo());
-
-lblCliente.setText(
-    "Cliente: " + clienteSeleccionado.getNombreCompleto()
-);
-
-lblNumeroFactura.setText(
-    "Número de factura: " + encontrada.getNumeroFactura()
-);
-
-actualizarDetallePedido();
+    actualizarDetallePedido();
     }//GEN-LAST:event_btnCargarPendienteActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
@@ -761,146 +756,144 @@ actualizarDetallePedido();
     return;
 }
 
-int fila = tblLineasFactura.getSelectedRow();
+    int fila = tblLineasFactura.getSelectedRow();
 
-if (fila == -1) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Seleccioná una línea de la tabla."
-    );
-    return;
-}
+    if (fila == -1) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Seleccioná una línea de la tabla."
+        );
+        return;
+    }
 
-int indice = tblLineasFactura.convertRowIndexToModel(fila);
+    int indice = tblLineasFactura.convertRowIndexToModel(fila);
 
-LineaFactura linea = pedidoActual.getLineas().get(indice);
-pedidoActual.eliminarLinea(linea);
+    LineaFactura linea = pedidoActual.getLineas().get(indice);
+    pedidoActual.eliminarLinea(linea);
 
-actualizarDetallePedido();
+    actualizarDetallePedido();
     }//GEN-LAST:event_btnEliminarLineaActionPerformed
 
     private void btnGuardarPendienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarPendienteActionPerformed
         if (pedidoActual.isBloqueado()) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Esta factura ya está pagada."
-    );
-    return;
-}
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Esta factura ya está pagada."
+            );
+            return;
+        }
 
-if (clienteSeleccionado == null) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Primero buscá y seleccioná un cliente."
-    );
-    return;
-}
+        if (clienteSeleccionado == null) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Primero buscá y seleccioná un cliente."
+            );
+            return;
+        }
 
-if (pedidoActual.getLineas().isEmpty()) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Agregá al menos un producto."
-    );
-    return;
-}
+        if (pedidoActual.getLineas().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Agregá al menos un producto."
+            );
+            return;
+        }
 
-if (!(empleado instanceof Cajero)) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "La factura debe registrarla un cajero."
-    );
-    return;
-}
+        if (!(empleado instanceof Cajero)) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "La factura debe registrarla un cajero."
+            );
+            return;
+        }
 
-if (facturaActual == null) {
-    facturaActual = new Factura(
-        0, clienteSeleccionado, (Cajero) empleado,
-        pedidoActual, ""
-    );
+        if (facturaActual == null) {
+            facturaActual = new Factura(
+                0, clienteSeleccionado, (Cajero) empleado,
+                pedidoActual, ""
+            );
 
-    sistema.registrarFactura(facturaActual);
-} else if (!facturaActual.getCliente().getCodigo()
-        .equals(clienteSeleccionado.getCodigo())) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Esta factura pertenece a otro cliente. "
-            + "Volvé a seleccionar su cliente original."
-    );
-    return;
-}
+            sistema.registrarFactura(facturaActual);
+        } else if (!facturaActual.getCliente().getCodigo()
+                .equals(clienteSeleccionado.getCodigo())) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Esta factura pertenece a otro cliente. "+ "Volvé a seleccionar su cliente original."
+            );
+            return;
+        }
 
-lblNumeroFactura.setText(
-    "Número de factura: " + facturaActual.getNumeroFactura()
-);
-actualizarEncabezado();
-javax.swing.JOptionPane.showMessageDialog(
-    this, "Factura pendiente guardada."
-);
+        lblNumeroFactura.setText(
+            "Número de factura: " + facturaActual.getNumeroFactura()
+        );
+        actualizarEncabezado();
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Factura pendiente guardada."
+        );
     }//GEN-LAST:event_btnGuardarPendienteActionPerformed
 
     private void btnCobrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCobrarActionPerformed
        if (facturaActual == null) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Primero guardá la factura como pendiente."
-    );
-    return;
-}
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Primero guardá la factura como pendiente."
+            );
+            return;
+        }
 
-if (facturaActual.getEstado() != EstadoFactura.PENDIENTE) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Esta factura ya está pagada."
-    );
-    return;
-}
+        if (facturaActual.getEstado() != EstadoFactura.PENDIENTE) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Esta factura ya está pagada."
+            );
+            return;
+        }
 
-if (clienteSeleccionado == null
+        if (clienteSeleccionado == null
         || !facturaActual.getCliente().getCodigo()
             .equals(clienteSeleccionado.getCodigo())) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Seleccioná el cliente original de esta factura."
-    );
-    return;
-}
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Seleccioná el cliente original de esta factura."
+            );
+            return;
+        }
 
-int respuesta = javax.swing.JOptionPane.showConfirmDialog(
-    this,
-    String.format(
-        "¿Confirmar el cobro de ₡%,.2f?",
-        facturaActual.calcularTotal()
-    ),
-    "Cobrar factura",
-    javax.swing.JOptionPane.YES_NO_OPTION
-);
+        int respuesta = javax.swing.JOptionPane.showConfirmDialog(
+        this,
+            String.format(
+                "¿Confirmar el cobro de ₡%,.2f?",
+                facturaActual.calcularTotal()
+            ),
+            "Cobrar factura",
+            javax.swing.JOptionPane.YES_NO_OPTION
+        );
 
-if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
-    return;
-}
+        if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
 
-if (!facturaActual.procesarPago()) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "No se pudo cobrar. Revisá que haya productos "
-            + "y suficientes porciones disponibles."
-    );
-    return;
-}
+        if (!facturaActual.procesarPago()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "No se pudo cobrar. Revisá que haya productos " + "y suficientes porciones disponibles."
+            );
+            return;
+        }
 
-actualizarDetallePedido();
-actualizarEncabezado();
+        actualizarDetallePedido();
+        actualizarEncabezado();
 
-javax.swing.JOptionPane.showMessageDialog(
-    this, "Factura pagada correctamente."
-);
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Factura pagada correctamente."
+        );
     }//GEN-LAST:event_btnCobrarActionPerformed
 
     private void btnVerFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerFacturaActionPerformed
         if (facturaActual == null) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Primero guardá o cargá una factura."
-    );
-    return;
-}
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Primero guardá o cargá una factura."
+                );
+            return;
+        }
 
-VentanaDetalleFactura ventana =
-    new VentanaDetalleFactura(
-        sistema, empleado, facturaActual, this
-    );
+        VentanaDetalleFactura ventana =
+            new VentanaDetalleFactura(
+                sistema, empleado, facturaActual, this
+            );
 
-ventana.setVisible(true);
-this.setVisible(false);
+        ventana.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnVerFacturaActionPerformed
 
 
@@ -931,6 +924,7 @@ this.setVisible(false);
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnBuscarCliente;
     private javax.swing.JButton btnCargarPendiente;
     private javax.swing.JButton btnCobrar;
     private javax.swing.JButton btnEliminarLinea;
@@ -941,7 +935,6 @@ this.setVisible(false);
     private javax.swing.JButton btnVerFactura;
     private javax.swing.JComboBox<String> cmbProducto;
     private javax.swing.JComboBox<String> cmbTamano;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton11;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;

@@ -176,23 +176,23 @@ public class VentanaRegistrarCliente extends javax.swing.JFrame {
         return;
        }
 
-    Cliente cliente = new Cliente(nombre, telefono, correo);
-    sistema.registrarCliente(cliente);
+        Cliente cliente = new Cliente(nombre, telefono, correo);
+        sistema.registrarCliente(cliente);
 
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Cliente registrado con el código: " + cliente.getCodigo()
-    );
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Cliente registrado con el código: " + cliente.getCodigo()
+        );
 
-    if (ventanaOrigen != null) {
-    ventanaOrigen.setVisible(true);
-} else {
-    VentanaClientes ventana =
-        new VentanaClientes(sistema, empleado);
+        if (ventanaOrigen != null) {
+        ventanaOrigen.setVisible(true);
+            
+        } else {
+            VentanaClientes ventana = new VentanaClientes(sistema, empleado);
 
-    ventana.setVisible(true);
-}
+            ventana.setVisible(true);
+        }
 
-this.dispose();
+        this.dispose();
     }//GEN-LAST:event_btnGuardarClienteActionPerformed
 
     private void txtNombreClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreClienteActionPerformed
@@ -204,16 +204,15 @@ this.dispose();
     }//GEN-LAST:event_txtTelefonoClienteActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-if (ventanaOrigen != null) {
-    ventanaOrigen.setVisible(true);
-} else {
-    VentanaClientes ventana =
-        new VentanaClientes(sistema, empleado);
+        if (ventanaOrigen != null) {
+            ventanaOrigen.setVisible(true);
+        } else {
+            VentanaClientes ventana = new VentanaClientes(sistema, empleado);
 
-    ventana.setVisible(true);
-}
+        ventana.setVisible(true);
+        }
 
-this.dispose();
+        this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**

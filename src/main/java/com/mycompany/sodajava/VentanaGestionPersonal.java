@@ -399,97 +399,95 @@ private void mostrarEmpleadoSeleccionado() {
 
     private void btnRegistrarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarEmpleadoActionPerformed
         if (!(empleado instanceof Administrador)) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Solo un administrador puede registrar empleados."
-    );
-    return;
-}
-
-String nombre = txtNombreEmpleado.getText().trim();
-String numero = txtNumeroEmpleado.getText().trim();
-String usuario = txtUsuarioEmpleado.getText().trim();
-String contrasena =
-    new String(txtContrasenaEmpleado.getPassword());
-String cedula = txtCedulaEmpleado.getText().trim();
-String correo = txtCorreoEmpleado.getText().trim();
-
-if (nombre.isEmpty() || numero.isEmpty()
-        || usuario.isEmpty() || contrasena.isBlank()) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Completá nombre, número, usuario y contraseña."
-    );
-    return;
-}
-
-for (Empleado persona : sistema.getEmpleados()) {
-    if (persona.getNumeroEmpleado().equals(numero)
-            || persona.getUsuario().equals(usuario)) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this, "El número de empleado o usuario ya está registrado."
-        );
-        return;
-    }
-}
-
-if (cmbRolEmpleado.getSelectedItem() == null) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Seleccioná un rol."
-    );
-    return;
-}
-
-String rol = cmbRolEmpleado.getSelectedItem().toString();
-Empleado nuevo;
-
-switch (rol) {
-    case "Administrador":
-        if (cedula.isEmpty() || correo.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(
-                this, "El administrador necesita cédula y correo."
+                this, "Solo un administrador puede registrar empleados."
             );
             return;
         }
 
-        nuevo = new Administrador(
-            cedula, correo, nombre, rol,
-            usuario, contrasena, numero
-        );
-        break;
+        String nombre = txtNombreEmpleado.getText().trim();
+        String numero = txtNumeroEmpleado.getText().trim();
+        String usuario = txtUsuarioEmpleado.getText().trim();
+        String contrasena = new String(txtContrasenaEmpleado.getPassword());
+        String cedula = txtCedulaEmpleado.getText().trim();
+        String correo = txtCorreoEmpleado.getText().trim();
 
-    case "Cajero":
-        nuevo = new Cajero(
-            nombre, rol, usuario, contrasena, numero
-        );
-        break;
+        if (nombre.isEmpty() || numero.isEmpty()
+                || usuario.isEmpty() || contrasena.isBlank()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Completá nombre, número, usuario y contraseña."
+            );
+            return;
+        }
 
-    case "Cocinero":
-        nuevo = new Cocinero(
-            nombre, rol, usuario, contrasena, numero
-        );
-        break;
+        for (Empleado persona : sistema.getEmpleados()) {
+            if (persona.getNumeroEmpleado().equals(numero)
+                    || persona.getUsuario().equals(usuario)) {
+                javax.swing.JOptionPane.showMessageDialog(
+                    this, "El número de empleado o usuario ya está registrado."
+                );
+                return;
+            }
+        }
 
-    default:
+        if (cmbRolEmpleado.getSelectedItem() == null) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Seleccioná un rol."
+            );
+            return;
+        }
+
+        String rol = cmbRolEmpleado.getSelectedItem().toString();
+        Empleado nuevo;
+
+        switch (rol) {
+            case "Administrador":
+                if (cedula.isEmpty() || correo.isEmpty()) {
+                    javax.swing.JOptionPane.showMessageDialog(
+                        this, "El administrador necesita cédula y correo."
+                    );
+                    return;
+                }
+
+                nuevo = new Administrador(
+                    cedula, correo, nombre, rol,
+                    usuario, contrasena, numero
+                );
+                break;
+
+            case "Cajero":
+                nuevo = new Cajero(
+                    nombre, rol, usuario, contrasena, numero
+                );
+                break;
+
+            case "Cocinero":
+                nuevo = new Cocinero(
+                    nombre, rol, usuario, contrasena, numero
+                );
+                break;
+
+            default:
+                javax.swing.JOptionPane.showMessageDialog(
+                    this, "Seleccioná un rol válido."
+                );
+                return;
+        }
+
+        sistema.registrarEmpleado(nuevo);
+        cargarEmpleados();
+        txtContrasenaEmpleado.setText("");
+
         javax.swing.JOptionPane.showMessageDialog(
-            this, "Seleccioná un rol válido."
+            this, "Empleado registrado correctamente."
         );
-        return;
-}
-
-sistema.registrarEmpleado(nuevo);
-cargarEmpleados();
-txtContrasenaEmpleado.setText("");
-
-javax.swing.JOptionPane.showMessageDialog(
-    this, "Empleado registrado correctamente."
-);
     }//GEN-LAST:event_btnRegistrarEmpleadoActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        VentanaAdministrador ventana =
-    new VentanaAdministrador(sistema, empleado);
+        VentanaAdministrador ventana = new VentanaAdministrador(sistema, empleado);
 
-ventana.setVisible(true);
-this.dispose();
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void txtCorreoEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCorreoEmpleadoActionPerformed
@@ -498,184 +496,52 @@ this.dispose();
 
     private void btnEliminarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarEmpleadoActionPerformed
         if (!(empleado instanceof Administrador)) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Solo un administrador puede eliminar empleados."
-    );
-    return;
-}
-
-int fila = tblEmpleados.getSelectedRow();
-
-if (fila == -1) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Seleccioná un empleado de la tabla."
-    );
-    return;
-}
-
-String numero = tblEmpleados.getValueAt(fila, 0).toString();
-
-if (numero.equals(empleado.getNumeroEmpleado())) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "No podés eliminar la cuenta que estás utilizando."
-    );
-    return;
-}
-
-int respuesta = javax.swing.JOptionPane.showConfirmDialog(
-    this,
-    "¿Eliminar al empleado " + numero + "?",
-    "Eliminar empleado",
-    javax.swing.JOptionPane.YES_NO_OPTION
-);
-
-if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
-    return;
-}
-
-sistema.eliminarEmpleado(numero);
-cargarEmpleados();
-txtContrasenaEmpleado.setText("");
-
-javax.swing.JOptionPane.showMessageDialog(
-    this, "Empleado eliminado correctamente."
-);
-    }//GEN-LAST:event_btnEliminarEmpleadoActionPerformed
-
-    private void btnModificarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarEmpleadoActionPerformed
-        if (!(empleado instanceof Administrador)) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Solo un administrador puede modificar empleados."
-    );
-    return;
-}
-
-int fila = tblEmpleados.getSelectedRow();
-
-if (fila == -1) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Seleccioná un empleado de la tabla."
-    );
-    return;
-}
-
-String numero = tblEmpleados.getValueAt(fila, 0).toString();
-Empleado original = null;
-
-for (Empleado persona : sistema.getEmpleados()) {
-    if (persona.getNumeroEmpleado().equals(numero)) {
-        original = persona;
-        break;
-    }
-}
-
-if (original == null) {
-    return;
-}
-
-if (!txtNumeroEmpleado.getText().trim().equals(numero)) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Conservá el número original del empleado."
-    );
-    return;
-}
-
-String nombre = txtNombreEmpleado.getText().trim();
-String usuario = txtUsuarioEmpleado.getText().trim();
-String cedula = txtCedulaEmpleado.getText().trim();
-String correo = txtCorreoEmpleado.getText().trim();
-String contrasena =
-    new String(txtContrasenaEmpleado.getPassword());
-
-if (nombre.isEmpty() || usuario.isEmpty()) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Completá el nombre y el usuario."
-    );
-    return;
-}
-
-if (contrasena.isEmpty()) {
-    contrasena = original.getContrasena();
-} else if (contrasena.isBlank()) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "La contraseña no puede contener solo espacios."
-    );
-    return;
-}
-
-for (Empleado persona : sistema.getEmpleados()) {
-    if (!persona.getNumeroEmpleado().equals(numero)
-            && persona.getUsuario().equals(usuario)) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this, "Ese usuario ya pertenece a otro empleado."
-        );
-        return;
-    }
-}
-
-if (cmbRolEmpleado.getSelectedItem() == null) {
-    return;
-}
-
-String rol = cmbRolEmpleado.getSelectedItem().toString();
-boolean cuentaActual =
-    numero.equals(empleado.getNumeroEmpleado());
-
-if (cuentaActual && !rol.equals("Administrador")) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Para cambiar tu rol, ingresá con otro administrador."
-    );
-    return;
-}
-
-Empleado actualizado;
-
-switch (rol) {
-    case "Administrador":
-        if (cedula.isEmpty() || correo.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(
-                this, "El administrador necesita cédula y correo."
+                this, "Solo un administrador puede eliminar empleados."
             );
             return;
         }
 
-        actualizado = new Administrador(
-            cedula, correo, nombre, rol,
-            usuario, contrasena, numero
-        );
-        break;
+        int fila = tblEmpleados.getSelectedRow();
 
-    case "Cajero":
-        actualizado = new Cajero(
-            nombre, rol, usuario, contrasena, numero
-        );
-        break;
+        if (fila == -1) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Seleccioná un empleado de la tabla."
+            );
+            return;
+        }
 
-    case "Cocinero":
-        actualizado = new Cocinero(
-            nombre, rol, usuario, contrasena, numero
-        );
-        break;
+        String numero = tblEmpleados.getValueAt(fila, 0).toString();
 
-    default:
+        if (numero.equals(empleado.getNumeroEmpleado())) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "No podés eliminar la cuenta que estás utilizando."
+            );
+            return;
+        }
+
+        int respuesta = javax.swing.JOptionPane.showConfirmDialog(
+            this,
+            "¿Eliminar al empleado " + numero + "?",
+            "Eliminar empleado",
+            javax.swing.JOptionPane.YES_NO_OPTION
+        );
+
+        if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        sistema.eliminarEmpleado(numero);
+        cargarEmpleados();
+        txtContrasenaEmpleado.setText("");
+
         javax.swing.JOptionPane.showMessageDialog(
-            this, "Seleccioná un rol válido."
+            this, "Empleado eliminado correctamente."
         );
-        return;
-}
+    }//GEN-LAST:event_btnEliminarEmpleadoActionPerformed
 
-sistema.modificarEmpleado(actualizado);
-
-if (cuentaActual) {
-    this.empleado = actualizado;
-}
-
-cargarEmpleados();
-txtContrasenaEmpleado.setText("");
-
-javax.swing.JOptionPane.showMessageDialog(
-    this, "Empleado modificado correctamente."
-);
+    private void btnModificarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarEmpleadoActionPerformed
+        // TODO add your handling code here:
     }//GEN-LAST:event_btnModificarEmpleadoActionPerformed
 
     /**

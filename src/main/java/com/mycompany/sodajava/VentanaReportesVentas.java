@@ -227,121 +227,120 @@ public VentanaReportesVentas(SistemaSoda sistema,
     private void btnDetalleFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetalleFacturaActionPerformed
         int fila = tblVentas.getSelectedRow();
 
-if (fila == -1) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Seleccioná una factura de la tabla."
-    );
-    return;
-}
+        if (fila == -1) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Seleccioná una factura de la tabla."
+            );
+            return;
+        }
 
-int numero = Integer.parseInt(
-    tblVentas.getValueAt(fila, 0).toString()
-);
+        int numero = Integer.parseInt(
+            tblVentas.getValueAt(fila, 0).toString()
+        );
 
-Factura factura = sistema.buscarFactura(numero);
+        Factura factura = sistema.buscarFactura(numero);
 
-if (factura == null) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "No se encontró la factura."
-    );
-    return;
-}
+        if (factura == null) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "No se encontró la factura."
+            );
+            return;
+        }
 
-VentanaDetalleFactura ventana =
-    new VentanaDetalleFactura(
-        sistema, empleado, factura, this
-    );
+        VentanaDetalleFactura ventana =
+            new VentanaDetalleFactura(
+                sistema, empleado, factura, this
+            );
 
-ventana.setVisible(true);
-this.setVisible(false);
+        ventana.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnDetalleFacturaActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        VentanaAdministrador ventana =
-    new VentanaAdministrador(sistema, empleado);
+        VentanaAdministrador ventana = new VentanaAdministrador(sistema, empleado);
 
-ventana.setVisible(true);
-this.dispose();
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarReporteActionPerformed
         if (!(empleado instanceof Administrador)) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Solo un administrador puede consultar reportes."
-    );
-    return;
-}
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Solo un administrador puede consultar reportes."
+            );
+            return;
+        }
 
-java.time.format.DateTimeFormatter formatoFecha =
-    java.time.format.DateTimeFormatter.ofPattern("dd/MM/uuuu")
-        .withResolverStyle(
-            java.time.format.ResolverStyle.STRICT
+        java.time.format.DateTimeFormatter formatoFecha =
+            java.time.format.DateTimeFormatter.ofPattern("dd/MM/uuuu")
+                .withResolverStyle(
+                    java.time.format.ResolverStyle.STRICT
+                );
+
+        java.time.LocalDate inicio;
+        java.time.LocalDate fin;
+
+        try {
+            inicio = java.time.LocalDate.parse(
+                txtFechaDesde.getText().trim(), formatoFecha
+            );
+
+            fin = java.time.LocalDate.parse(
+                txtFechaHasta.getText().trim(), formatoFecha
+            );
+        } catch (java.time.format.DateTimeParseException ex) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Escribí fechas válidas con formato dd/MM/aaaa."
+            );
+            return;
+        }
+
+        if (inicio.isAfter(fin)) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "La fecha inicial no puede ser posterior a la final."
+            );
+            return;
+        }
+
+        javax.swing.table.DefaultTableModel modelo =
+            (javax.swing.table.DefaultTableModel) tblVentas.getModel();
+
+        modelo.setRowCount(0);
+
+        java.time.format.DateTimeFormatter formatoHora =
+            java.time.format.DateTimeFormatter.ofPattern("HH:mm");
+
+        int cantidad = 0;
+        double total = 0;
+
+        for (Factura factura : sistema.getFacturas()) {
+            java.time.LocalDate fecha =
+                factura.getFecha().toLocalDate();
+
+            if (factura.getEstado() == EstadoFactura.PAGADA
+                    && !fecha.isBefore(inicio)
+                    && !fecha.isAfter(fin)) {
+
+                modelo.addRow(new Object[]{
+                    String.valueOf(factura.getNumeroFactura()),
+                    factura.getFecha().format(formatoFecha),
+                    factura.getFecha().format(formatoHora),
+                    factura.getCliente().getNombreCompleto(),
+                    factura.getCajero().getNombre(),
+                    factura.calcularSubtotal(),
+                    factura.calcularImpuesto(),
+                    factura.calcularTotal()
+                });
+
+                cantidad++;
+                total += factura.calcularTotal();
+            }
+        }
+
+        lblCantidadVentas.setText("Cantidad de ventas: " + cantidad);
+        lblTotalVentas.setText(
+            String.format("Total vendido: ₡%,.2f", total)
         );
-
-java.time.LocalDate inicio;
-java.time.LocalDate fin;
-
-try {
-    inicio = java.time.LocalDate.parse(
-        txtFechaDesde.getText().trim(), formatoFecha
-    );
-
-    fin = java.time.LocalDate.parse(
-        txtFechaHasta.getText().trim(), formatoFecha
-    );
-} catch (java.time.format.DateTimeParseException ex) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Escribí fechas válidas con formato dd/MM/aaaa."
-    );
-    return;
-}
-
-if (inicio.isAfter(fin)) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "La fecha inicial no puede ser posterior a la final."
-    );
-    return;
-}
-
-javax.swing.table.DefaultTableModel modelo =
-    (javax.swing.table.DefaultTableModel) tblVentas.getModel();
-
-modelo.setRowCount(0);
-
-java.time.format.DateTimeFormatter formatoHora =
-    java.time.format.DateTimeFormatter.ofPattern("HH:mm");
-
-int cantidad = 0;
-double total = 0;
-
-for (Factura factura : sistema.getFacturas()) {
-    java.time.LocalDate fecha =
-        factura.getFecha().toLocalDate();
-
-    if (factura.getEstado() == EstadoFactura.PAGADA
-            && !fecha.isBefore(inicio)
-            && !fecha.isAfter(fin)) {
-
-        modelo.addRow(new Object[]{
-            String.valueOf(factura.getNumeroFactura()),
-            factura.getFecha().format(formatoFecha),
-            factura.getFecha().format(formatoHora),
-            factura.getCliente().getNombreCompleto(),
-            factura.getCajero().getNombre(),
-            factura.calcularSubtotal(),
-            factura.calcularImpuesto(),
-            factura.calcularTotal()
-        });
-
-        cantidad++;
-        total += factura.calcularTotal();
-    }
-}
-
-lblCantidadVentas.setText("Cantidad de ventas: " + cantidad);
-lblTotalVentas.setText(
-    String.format("Total vendido: ₡%,.2f", total)
-);
     }//GEN-LAST:event_btnGenerarReporteActionPerformed
 
     /**

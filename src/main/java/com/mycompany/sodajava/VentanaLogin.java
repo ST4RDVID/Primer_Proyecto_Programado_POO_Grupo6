@@ -145,40 +145,37 @@ public VentanaLogin(SistemaSoda sistema) {
 
     private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarActionPerformed
         String usuario = txtUsuario.getText().trim();
-String contrasena = new String(txtContrasena.getPassword());
+        String contrasena = new String(txtContrasena.getPassword());
 
-if (usuario.isEmpty() || contrasena.isEmpty()) {
-    javax.swing.JOptionPane.showMessageDialog(
-            this, "Completá el usuario y la contraseña.");
-    return;
-}
+        if (usuario.isEmpty() || contrasena.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                    this, "Completá el usuario y la contraseña.");
+            return;
+        }
 
-Empleado empleado = sistema.iniciarSesion(usuario, contrasena);
+        Empleado empleado = sistema.iniciarSesion(usuario, contrasena);
 
-if (empleado == null) {
-    javax.swing.JOptionPane.showMessageDialog(
-            this, "Usuario o contraseña incorrectos.");
-    return;
-}
+        if (empleado == null) {
+            javax.swing.JOptionPane.showMessageDialog(
+                    this, "Usuario o contraseña incorrectos.");
+            return;
+        }
 
-if (empleado instanceof Administrador) {
-    VentanaAdministrador ventana =
-            new VentanaAdministrador(sistema, empleado);
-    ventana.setVisible(true);
-    this.dispose();
-}
-else if (empleado instanceof Cajero) {
-    VentanaCajero ventana =
-            new VentanaCajero(sistema, empleado);
-    ventana.setVisible(true);
-    this.dispose();
-}
-else if (empleado instanceof Cocinero) {
-    VentanaCocina ventana =
-            new VentanaCocina(sistema, empleado);
-    ventana.setVisible(true);
-    this.dispose();
-}
+        if (empleado instanceof Administrador) {
+            VentanaAdministrador ventana = new VentanaAdministrador(sistema, empleado);
+            ventana.setVisible(true);
+            this.dispose();
+        }
+        else if (empleado instanceof Cajero) {
+            VentanaCajero ventana = new VentanaCajero(sistema, empleado);
+            ventana.setVisible(true);
+            this.dispose();
+        }
+        else if (empleado instanceof Cocinero) {
+            VentanaCocina ventana = new VentanaCocina(sistema, empleado);
+            ventana.setVisible(true);
+            this.dispose();
+        }
     }//GEN-LAST:event_btnIngresarActionPerformed
 
     /**

@@ -19,15 +19,16 @@ public class VentanaEntregaPedidos extends javax.swing.JFrame {
     public VentanaEntregaPedidos() {
         initComponents();
     }
-public VentanaEntregaPedidos(SistemaSoda sistema,
+    
+    public VentanaEntregaPedidos(SistemaSoda sistema,
         Empleado empleado) {
-    this();
-    this.sistema = sistema;
-    this.empleado = empleado;
+        this();
+        this.sistema = sistema;
+        this.empleado = empleado;
 
-    setLocationRelativeTo(null);
-    cargarPedidosEntrega();
-}
+        setLocationRelativeTo(null);
+        cargarPedidosEntrega();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -147,69 +148,65 @@ public VentanaEntregaPedidos(SistemaSoda sistema,
 
     private void btnMarcarEntregadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMarcarEntregadoActionPerformed
         if (!(empleado instanceof Cajero)) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Solo un cajero puede entregar pedidos."
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Solo un cajero puede entregar pedidos."
+            );
+            return;
+    }
+
+        int fila = tblPedidosEntrega.getSelectedRow();
+
+        if (fila == -1) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Seleccioná un pedido de la tabla."
+            );
+            return;
+    }
+
+        int numero = Integer.parseInt(
+        tblPedidosEntrega.getValueAt(fila, 0).toString()
     );
-    return;
-}
 
-int fila = tblPedidosEntrega.getSelectedRow();
+        Factura factura = sistema.buscarFactura(numero);
 
-if (fila == -1) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Seleccioná un pedido de la tabla."
-    );
-    return;
-}
-
-int numero = Integer.parseInt(
-    tblPedidosEntrega.getValueAt(fila, 0).toString()
-);
-
-Factura factura = sistema.buscarFactura(numero);
-
-if (factura == null
+        if (factura == null
         || factura.getEstado() != EstadoFactura.PAGADA
-        || factura.getPedido().getEstado()
-            != EstadoPedido.LISTO_PARA_RETIRAR) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "El pedido no está listo para entregar."
-    );
-    cargarPedidosEntrega();
-    return;
-}
+        || factura.getPedido().getEstado()!= EstadoPedido.LISTO_PARA_RETIRAR) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "El pedido no está listo para entregar."
+        );
+        cargarPedidosEntrega();
+        return;
+    }
 
-factura.getPedido().cambiarEstado(EstadoPedido.ENTREGADO);
-cargarPedidosEntrega();
+        factura.getPedido().cambiarEstado(EstadoPedido.ENTREGADO);
+        cargarPedidosEntrega();
 
-javax.swing.JOptionPane.showMessageDialog(
-    this, "Pedido entregado correctamente."
-);
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Pedido entregado correctamente."
+        );
     }//GEN-LAST:event_btnMarcarEntregadoActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-       VentanaCajero ventana =
-    new VentanaCajero(sistema, empleado);
+       VentanaCajero ventana = new VentanaCajero(sistema, empleado);
 
-ventana.setVisible(true);
-this.dispose();
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
-private void cargarPedidosEntrega() {
-    javax.swing.table.DefaultTableModel modelo =
-        (javax.swing.table.DefaultTableModel)
+    private void cargarPedidosEntrega() {
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel)
         tblPedidosEntrega.getModel();
 
-    modelo.setRowCount(0);
+        modelo.setRowCount(0);
 
-    java.time.format.DateTimeFormatter formatoHora =
+        java.time.format.DateTimeFormatter formatoHora =
         java.time.format.DateTimeFormatter.ofPattern("HH:mm");
 
-    for (Factura factura : sistema.getFacturas()) {
-        if (factura.getEstado() == EstadoFactura.PAGADA
-                && factura.getPedido().getEstado()
-                    == EstadoPedido.LISTO_PARA_RETIRAR) {
+        for (Factura factura : sistema.getFacturas()) {
+            if (factura.getEstado() == EstadoFactura.PAGADA
+                && factura.getPedido().getEstado() == EstadoPedido.LISTO_PARA_RETIRAR) {
 
-            modelo.addRow(new Object[]{
+                modelo.addRow(new Object[]{
                 String.valueOf(factura.getNumeroFactura()),
                 factura.getCliente().getNombreCompleto(),
                 factura.getFecha().format(formatoHora),

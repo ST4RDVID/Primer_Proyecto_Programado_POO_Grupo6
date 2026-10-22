@@ -481,141 +481,138 @@ public class VentanaCocina extends javax.swing.JFrame {
 
     private void btnRegistrarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarProductoActionPerformed
         if (!(empleado instanceof Cocinero)) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Solo un cocinero puede registrar productos."
-    );
-    return;
+            javax.swing.JOptionPane.showMessageDialog(
+            this, "Solo un cocinero puede registrar productos."
+        );
+        return;
 }
 
-String codigo = txtCodigoProducto.getText().trim();
-String nombre = txtNombreProducto.getText().trim();
-String descripcion = txtDescripcionProducto.getText().trim();
+        String codigo = txtCodigoProducto.getText().trim();
+        String nombre = txtNombreProducto.getText().trim();
+        String descripcion = txtDescripcionProducto.getText().trim();
 
-if (codigo.isEmpty() || nombre.isEmpty() || descripcion.isEmpty()) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Completá el código, nombre y descripción."
-    );
-    return;
-}
+        if (codigo.isEmpty() || nombre.isEmpty() || descripcion.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Completá el código, nombre y descripción."
+            );
+            return;
+        }
 
-if (sistema.buscarProducto(codigo) != null) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Ya existe un producto con ese código."
-    );
-    return;
-}
+        if (sistema.buscarProducto(codigo) != null) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Ya existe un producto con ese código."
+            );
+            return;
+        }
 
-double precio;
-int porciones;
+        double precio;
+        int porciones;
 
-try {
-    precio = Double.parseDouble(
-        txtPrecioProducto.getText().trim().replace(',', '.')
-    );
+        try {
+            precio = Double.parseDouble(txtPrecioProducto.getText().trim().replace(',', '.')
+            );
 
-    spnPorcionesProducto.commitEdit();
-    porciones = ((Number) spnPorcionesProducto.getValue()).intValue();
-} catch (NumberFormatException | java.text.ParseException ex) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Revisá el precio y las porciones."
-    );
-    return;
-}
+            spnPorcionesProducto.commitEdit();
+            porciones = ((Number) spnPorcionesProducto.getValue()).intValue();
+        } catch (NumberFormatException | java.text.ParseException ex) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Revisá el precio y las porciones."
+            );
+            return;
+        }
 
-if (!Double.isFinite(precio) || precio < 0 || porciones < 0) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "El precio y las porciones deben ser cero o mayores."
-    );
-    return;
-}
+        if (!Double.isFinite(precio) || precio < 0 || porciones < 0) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "El precio y las porciones deben ser cero o mayores."
+            );
+            return;
+        }
 
-if (cmbTamanoProducto.getSelectedItem() == null) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Seleccioná un tamaño."
-    );
-    return;
-}
+        if (cmbTamanoProducto.getSelectedItem() == null) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Seleccioná un tamaño."
+            );
+            return;
+        }
 
-Tamano tamano = switch (
-    cmbTamanoProducto.getSelectedItem().toString()
-) {
-    case "Pequeño" -> Tamano.PEQUENO;
-    case "Grande" -> Tamano.GRANDE;
-    case "Especial" -> Tamano.ESPECIAL;
-    default -> null;
-};
+        Tamano tamano = switch (cmbTamanoProducto.getSelectedItem().toString()
+        ) {
+            case "Pequeño" -> Tamano.PEQUENO;
+            case "Grande" -> Tamano.GRANDE;
+            case "Especial" -> Tamano.ESPECIAL;
+            default -> null;
+        };
 
-if (tamano == null) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Seleccioná un tamaño válido."
-    );
-    return;
-}
+        if (tamano == null) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Seleccioná un tamaño válido."
+            );
+            return;
+        }
 
-Producto producto = new Producto(
-    codigo, nombre, tamano, descripcion, precio, porciones
-);
+        Producto producto = new Producto(
+            codigo, nombre, tamano, descripcion, precio, porciones
+        );
 
-sistema.agregarProducto(producto);
-cargarProductos();
+        sistema.agregarProducto(producto);
+        cargarProductos();
 
-javax.swing.JOptionPane.showMessageDialog(
-    this, "Producto registrado correctamente."
-);
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Producto registrado correctamente."
+        );
     }//GEN-LAST:event_btnRegistrarProductoActionPerformed
 
     private void btnActualizarPorcionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarPorcionesActionPerformed
         if (!(empleado instanceof Cocinero)) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Solo un cocinero puede actualizar las porciones."
-    );
-    return;
-}
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Solo un cocinero puede actualizar las porciones."
+        );
+        return;
+    }
 
-int fila = tblProductos.getSelectedRow();
+        int fila = tblProductos.getSelectedRow();
 
-if (fila == -1) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Seleccioná un producto de la tabla."
-    );
-    return;
-}
+        if (fila == -1) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Seleccioná un producto de la tabla."
+            );
+            return;
+        }
 
-String codigo = tblProductos.getValueAt(fila, 0).toString();
-Producto producto = sistema.buscarProducto(codigo);
+        String codigo = tblProductos.getValueAt(fila, 0).toString();
+        Producto producto = sistema.buscarProducto(codigo);
 
-if (producto == null) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "No se encontró el producto."
-    );
-    return;
-}
+        if (producto == null) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "No se encontró el producto."
+            );
+            return;
+        }
 
-try {
-    spnPorcionesProducto.commitEdit();
-} catch (java.text.ParseException ex) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Escribí una cantidad válida."
-    );
-    return;
-}
+        try {
+            spnPorcionesProducto.commitEdit();
+        } catch (java.text.ParseException ex) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Escribí una cantidad válida."
+            );
+            return;
+        }
 
-int cantidad =
-    ((Number) spnPorcionesProducto.getValue()).intValue();
+        int cantidad =((Number) spnPorcionesProducto.getValue()).intValue();
 
-if (cantidad < 0) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Las porciones no pueden ser negativas."
-    );
-    return;
-}
+        if (cantidad < 0) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Las porciones no pueden ser negativas."
+            );
+            return;
+        }
 
-producto.actualizarPorciones(cantidad);
-cargarProductos();
+        producto.actualizarPorciones(cantidad);
+        cargarProductos();
 
-javax.swing.JOptionPane.showMessageDialog(
-    this, "Porciones actualizadas correctamente."
-);
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Porciones actualizadas correctamente."
+        );
     }//GEN-LAST:event_btnActualizarPorcionesActionPerformed
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
@@ -626,82 +623,82 @@ javax.swing.JOptionPane.showMessageDialog(
 
     private void btnMarcarListoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMarcarListoActionPerformed
         if (!(empleado instanceof Cocinero)) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Solo un cocinero puede preparar pedidos."
-    );
-    return;
-}
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Solo un cocinero puede preparar pedidos."
+        );
+        return;
+    }
 
-int fila = tblPedidosCocina.getSelectedRow();
+        int fila = tblPedidosCocina.getSelectedRow();
 
-if (fila == -1) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Seleccioná un pedido de la tabla."
-    );
-    return;
-}
+        if (fila == -1) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Seleccioná un pedido de la tabla."
+        );
+        return;
+    }
 
-int numero = Integer.parseInt(
-    tblPedidosCocina.getValueAt(fila, 0).toString()
-);
+        int numero = Integer.parseInt(
+        tblPedidosCocina.getValueAt(fila, 0).toString()
+        );
 
-Factura factura = sistema.buscarFactura(numero);
+        Factura factura = sistema.buscarFactura(numero);
 
-if (factura == null
+        if (factura == null
         || factura.getEstado() != EstadoFactura.PAGADA
         || factura.getPedido().getEstado()
             != EstadoPedido.EN_PREPARACION) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "El pedido ya no está disponible para preparar."
-    );
-    cargarPedidosCocina();
-    return;
-}
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "El pedido ya no está disponible para preparar."
+            );
+        cargarPedidosCocina();
+        return;
+    }
 
-factura.registrarPreparacion((Cocinero) empleado);
-cargarPedidosCocina();
+        factura.registrarPreparacion((Cocinero) empleado);
+        cargarPedidosCocina();
 
-javax.swing.JOptionPane.showMessageDialog(
-    this, "Pedido listo para retirar."
-);
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Pedido listo para retirar."
+        );
     }//GEN-LAST:event_btnMarcarListoActionPerformed
 
     private void btnEliminarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarProductoActionPerformed
         if (!(empleado instanceof Cocinero)) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Solo un cocinero puede eliminar productos."
-    );
-    return;
-}
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Solo un cocinero puede eliminar productos."
+        );
+        return;
+    }
 
-int fila = tblProductos.getSelectedRow();
+        int fila = tblProductos.getSelectedRow();
 
-if (fila == -1) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Seleccioná un producto de la tabla."
-    );
-    return;
-}
+        if (fila == -1) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Seleccioná un producto de la tabla."
+        );
+        return;
+    }
 
-String codigo = tblProductos.getValueAt(fila, 0).toString();
+        String codigo = tblProductos.getValueAt(fila, 0).toString();
 
-int respuesta = javax.swing.JOptionPane.showConfirmDialog(
-    this,
-    "¿Eliminar del menú el producto " + codigo + "?",
-    "Eliminar producto",
-    javax.swing.JOptionPane.YES_NO_OPTION
-);
+        int respuesta = javax.swing.JOptionPane.showConfirmDialog(
+            this,
+            "¿Eliminar del menú el producto " + codigo + "?",
+            "Eliminar producto",
+            javax.swing.JOptionPane.YES_NO_OPTION
+        );
 
-if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
-    return;
-}
+        if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
 
-sistema.eliminarProducto(codigo);
-cargarProductos();
+        sistema.eliminarProducto(codigo);
+        cargarProductos();
 
-javax.swing.JOptionPane.showMessageDialog(
-    this, "Producto eliminado del menú."
-);
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Producto eliminado del menú."
+        );
     }//GEN-LAST:event_btnEliminarProductoActionPerformed
 private void cargarProductos() {
     javax.swing.table.DefaultTableModel modelo =
