@@ -19,79 +19,111 @@ public class VentanaCocina extends javax.swing.JFrame {
     public VentanaCocina() {
         initComponents();
     }
+    
     public VentanaCocina(SistemaSoda sistema, Empleado empleado) {
-    this();
-    this.sistema = sistema;
-    this.empleado = empleado;
-    setLocationRelativeTo(null);
-    cargarPedidosCocina();
-    tblPedidosCocina.getSelectionModel()
-    .addListSelectionListener(evento -> {
+        this();
+        this.sistema = sistema;
+        this.empleado = empleado;
+        setLocationRelativeTo(null);
+        cargarPedidosCocina();
+        cargarProductos();
+        tblProductos.getSelectionModel().addListSelectionListener(evento -> {
         if (!evento.getValueIsAdjusting()) {
-            mostrarProductosOrden();
-        }
-    });
-}
-private void cargarPedidosCocina() {
-    javax.swing.table.DefaultTableModel modelo =
-        (javax.swing.table.DefaultTableModel)
+            mostrarProductoSeleccionado();
+            }
+        });
+        tblPedidosCocina.getSelectionModel().addListSelectionListener(evento -> {
+            if (!evento.getValueIsAdjusting()) {
+                mostrarProductosOrden();
+                }
+        });
+    }
+    
+    private void cargarPedidosCocina() {
+        javax.swing.table.DefaultTableModel modelo =(javax.swing.table.DefaultTableModel)
         tblPedidosCocina.getModel();
 
-    modelo.setRowCount(0);
+        modelo.setRowCount(0);
 
-    javax.swing.table.DefaultTableModel detalle =
-        (javax.swing.table.DefaultTableModel)
+        javax.swing.table.DefaultTableModel detalle = (javax.swing.table.DefaultTableModel)
         tblProductosOrden.getModel();
 
-    detalle.setRowCount(0);
+        detalle.setRowCount(0);
 
-    java.time.format.DateTimeFormatter formatoHora =
-        java.time.format.DateTimeFormatter.ofPattern("HH:mm");
+        java.time.format.DateTimeFormatter formatoHora = java.time.format.DateTimeFormatter.ofPattern("HH:mm");
 
-    for (Factura factura : sistema.getFacturas()) {
-        if (factura.getEstado() == EstadoFactura.PAGADA
-                && factura.getPedido().getEstado()
-                    == EstadoPedido.EN_PREPARACION) {
+        for (Factura factura : sistema.getFacturas()) {
+            if (factura.getEstado() == EstadoFactura.PAGADA
+                && factura.getPedido().getEstado() == EstadoPedido.EN_PREPARACION) {
 
             modelo.addRow(new Object[]{
                 String.valueOf(factura.getNumeroFactura()),
                 factura.getCliente().getNombreCompleto(),
                 factura.getFecha().format(formatoHora),
                 factura.getPedido().getEstado().toString()
+                });
+            }
+        }
+    }
+    private void mostrarProductosOrden() {
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel)
+        tblProductosOrden.getModel();
+
+        modelo.setRowCount(0);
+
+        int fila = tblPedidosCocina.getSelectedRow();
+
+        if (fila == -1) {
+            return;
+        }
+
+        int numero = Integer.parseInt(
+            tblPedidosCocina.getValueAt(fila, 0).toString()
+        );
+
+        Factura factura = sistema.buscarFactura(numero);
+
+        if (factura == null) {
+            return;
+        }
+
+        for (LineaFactura linea : factura.getPedido().getLineas()) {
+            modelo.addRow(new Object[]{
+                linea.getProducto().getNombre(),
+                linea.getProducto().getTamano().toString(),
+                linea.getCantidad()
             });
         }
     }
-}
-private void mostrarProductosOrden() {
-    javax.swing.table.DefaultTableModel modelo =
-        (javax.swing.table.DefaultTableModel)
-        tblProductosOrden.getModel();
+    private void mostrarProductoSeleccionado() {
+        int fila = tblProductos.getSelectedRow();
 
-    modelo.setRowCount(0);
+        if (fila == -1) {
+            return;
+        }
 
-    int fila = tblPedidosCocina.getSelectedRow();
+        String codigo = tblProductos.getValueAt(fila, 0).toString();
+        Producto producto = sistema.buscarProducto(codigo);
 
-    if (fila == -1) {
-        return;
-    }
+        if (producto == null) {
+            return;
+        }
 
-    int numero = Integer.parseInt(
-        tblPedidosCocina.getValueAt(fila, 0).toString()
+    txtCodigoProducto.setText(producto.getCodigo());
+    txtNombreProducto.setText(producto.getNombre());
+    txtDescripcionProducto.setText(producto.getDescripcion());
+    txtPrecioProducto.setText(
+        String.valueOf(producto.getPrecioUnitario())
     );
+    spnPorcionesProducto.setValue(producto.getCantidadDisponible());
 
-    Factura factura = sistema.buscarFactura(numero);
+    String tamano = switch (producto.getTamano()) {
+        case PEQUENO -> "Pequeño";
+        case GRANDE -> "Grande";
+        case ESPECIAL -> "Especial";
+    };
 
-    if (factura == null) {
-        return;
-    }
-
-    for (LineaFactura linea : factura.getPedido().getLineas()) {
-        modelo.addRow(new Object[]{
-            linea.getProducto().getNombre(),
-            linea.getProducto().getTamano().toString(),
-            linea.getCantidad()
-        });
-    }
+    cmbTamanoProducto.setSelectedItem(tamano);
 }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -107,20 +139,20 @@ private void mostrarProductosOrden() {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtCodigoProducto = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cmbTamanoProducto = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        txtNombreProducto = new javax.swing.JTextField();
+        txtDescripcionProducto = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtPrecioProducto = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        jSpinner1 = new javax.swing.JSpinner();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        spnPorcionesProducto = new javax.swing.JSpinner();
+        btnRegistrarProducto = new javax.swing.JButton();
+        btnActualizarPorciones = new javax.swing.JButton();
+        btnEliminarProducto = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblProductos = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
@@ -143,7 +175,7 @@ private void mostrarProductosOrden() {
 
         jLabel4.setText("Tamaño:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pequeño", "Grande", "Especial" }));
+        cmbTamanoProducto.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pequeño", "Grande", "Especial" }));
 
         jLabel5.setText("Descripción:");
 
@@ -151,23 +183,28 @@ private void mostrarProductosOrden() {
 
         jLabel7.setText("Porciones disponibles:");
 
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        spnPorcionesProducto.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
-        jButton1.setText("Registrar producto");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnRegistrarProducto.setText("Registrar producto");
+        btnRegistrarProducto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnRegistrarProductoActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Actualizar porciones");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnActualizarPorciones.setText("Actualizar porciones");
+        btnActualizarPorciones.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnActualizarPorcionesActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Eliminar producto");
+        btnEliminarProducto.setText("Eliminar producto");
+        btnEliminarProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarProductoActionPerformed(evt);
+            }
+        });
 
         tblProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -193,6 +230,14 @@ private void mostrarProductosOrden() {
             }
         });
         jScrollPane1.setViewportView(tblProductos);
+        if (tblProductos.getColumnModel().getColumnCount() > 0) {
+            tblProductos.getColumnModel().getColumn(0).setPreferredWidth(90);
+            tblProductos.getColumnModel().getColumn(1).setPreferredWidth(130);
+            tblProductos.getColumnModel().getColumn(2).setPreferredWidth(100);
+            tblProductos.getColumnModel().getColumn(3).setPreferredWidth(350);
+            tblProductos.getColumnModel().getColumn(4).setPreferredWidth(110);
+            tblProductos.getColumnModel().getColumn(5).setPreferredWidth(140);
+        }
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -206,37 +251,37 @@ private void mostrarProductosOrden() {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField3))
+                                .addComponent(txtDescripcionProducto))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                 .addGap(182, 182, 182)
-                                .addComponent(jButton1)
+                                .addComponent(btnRegistrarProducto)
                                 .addGap(37, 37, 37)
-                                .addComponent(jButton2)
+                                .addComponent(btnActualizarPorciones)
                                 .addGap(32, 32, 32)
-                                .addComponent(jButton3))
+                                .addComponent(btnEliminarProducto))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel6)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(txtPrecioProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel4)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(cmbTamanoProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel2)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(txtCodigoProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel7)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(spnPorcionesProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel3)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 509, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 373, Short.MAX_VALUE))))
+                                        .addComponent(txtNombreProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 509, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 367, Short.MAX_VALUE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jScrollPane1)))
@@ -248,35 +293,35 @@ private void mostrarProductosOrden() {
                 .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCodigoProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNombreProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbTamanoProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(txtDescripcionProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPrecioProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(spnPorcionesProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(btnRegistrarProducto)
+                    .addComponent(btnActualizarPorciones)
+                    .addComponent(btnEliminarProducto))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10))
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Productos y porciones", jPanel2);
@@ -434,13 +479,144 @@ private void mostrarProductosOrden() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btnRegistrarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarProductoActionPerformed
+        if (!(empleado instanceof Cocinero)) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Solo un cocinero puede registrar productos."
+    );
+    return;
+}
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+String codigo = txtCodigoProducto.getText().trim();
+String nombre = txtNombreProducto.getText().trim();
+String descripcion = txtDescripcionProducto.getText().trim();
+
+if (codigo.isEmpty() || nombre.isEmpty() || descripcion.isEmpty()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Completá el código, nombre y descripción."
+    );
+    return;
+}
+
+if (sistema.buscarProducto(codigo) != null) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Ya existe un producto con ese código."
+    );
+    return;
+}
+
+double precio;
+int porciones;
+
+try {
+    precio = Double.parseDouble(
+        txtPrecioProducto.getText().trim().replace(',', '.')
+    );
+
+    spnPorcionesProducto.commitEdit();
+    porciones = ((Number) spnPorcionesProducto.getValue()).intValue();
+} catch (NumberFormatException | java.text.ParseException ex) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Revisá el precio y las porciones."
+    );
+    return;
+}
+
+if (!Double.isFinite(precio) || precio < 0 || porciones < 0) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "El precio y las porciones deben ser cero o mayores."
+    );
+    return;
+}
+
+if (cmbTamanoProducto.getSelectedItem() == null) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná un tamaño."
+    );
+    return;
+}
+
+Tamano tamano = switch (
+    cmbTamanoProducto.getSelectedItem().toString()
+) {
+    case "Pequeño" -> Tamano.PEQUENO;
+    case "Grande" -> Tamano.GRANDE;
+    case "Especial" -> Tamano.ESPECIAL;
+    default -> null;
+};
+
+if (tamano == null) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná un tamaño válido."
+    );
+    return;
+}
+
+Producto producto = new Producto(
+    codigo, nombre, tamano, descripcion, precio, porciones
+);
+
+sistema.agregarProducto(producto);
+cargarProductos();
+
+javax.swing.JOptionPane.showMessageDialog(
+    this, "Producto registrado correctamente."
+);
+    }//GEN-LAST:event_btnRegistrarProductoActionPerformed
+
+    private void btnActualizarPorcionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarPorcionesActionPerformed
+        if (!(empleado instanceof Cocinero)) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Solo un cocinero puede actualizar las porciones."
+    );
+    return;
+}
+
+int fila = tblProductos.getSelectedRow();
+
+if (fila == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná un producto de la tabla."
+    );
+    return;
+}
+
+String codigo = tblProductos.getValueAt(fila, 0).toString();
+Producto producto = sistema.buscarProducto(codigo);
+
+if (producto == null) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "No se encontró el producto."
+    );
+    return;
+}
+
+try {
+    spnPorcionesProducto.commitEdit();
+} catch (java.text.ParseException ex) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Escribí una cantidad válida."
+    );
+    return;
+}
+
+int cantidad =
+    ((Number) spnPorcionesProducto.getValue()).intValue();
+
+if (cantidad < 0) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Las porciones no pueden ser negativas."
+    );
+    return;
+}
+
+producto.actualizarPorciones(cantidad);
+cargarProductos();
+
+javax.swing.JOptionPane.showMessageDialog(
+    this, "Porciones actualizadas correctamente."
+);
+    }//GEN-LAST:event_btnActualizarPorcionesActionPerformed
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
         VentanaLogin login = new VentanaLogin(sistema);
@@ -490,6 +666,61 @@ javax.swing.JOptionPane.showMessageDialog(
 );
     }//GEN-LAST:event_btnMarcarListoActionPerformed
 
+    private void btnEliminarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarProductoActionPerformed
+        if (!(empleado instanceof Cocinero)) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Solo un cocinero puede eliminar productos."
+    );
+    return;
+}
+
+int fila = tblProductos.getSelectedRow();
+
+if (fila == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná un producto de la tabla."
+    );
+    return;
+}
+
+String codigo = tblProductos.getValueAt(fila, 0).toString();
+
+int respuesta = javax.swing.JOptionPane.showConfirmDialog(
+    this,
+    "¿Eliminar del menú el producto " + codigo + "?",
+    "Eliminar producto",
+    javax.swing.JOptionPane.YES_NO_OPTION
+);
+
+if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
+    return;
+}
+
+sistema.eliminarProducto(codigo);
+cargarProductos();
+
+javax.swing.JOptionPane.showMessageDialog(
+    this, "Producto eliminado del menú."
+);
+    }//GEN-LAST:event_btnEliminarProductoActionPerformed
+private void cargarProductos() {
+    javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel)
+        tblProductos.getModel();
+
+    modelo.setRowCount(0);
+
+    for (Producto producto : sistema.getProductos()) {
+        modelo.addRow(new Object[]{
+            producto.getCodigo(),
+            producto.getNombre(),
+            producto.getTamano().toString(),
+            producto.getDescripcion(),
+            producto.getPrecioUnitario(),
+            producto.getCantidadDisponible()
+        });
+    }
+}
     /**
      * @param args the command line arguments
      */
@@ -516,12 +747,12 @@ javax.swing.JOptionPane.showMessageDialog(
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnActualizarPorciones;
     private javax.swing.JButton btnCerrarSesion;
+    private javax.swing.JButton btnEliminarProducto;
     private javax.swing.JButton btnMarcarListo;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton btnRegistrarProducto;
+    private javax.swing.JComboBox<String> cmbTamanoProducto;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -536,14 +767,14 @@ javax.swing.JOptionPane.showMessageDialog(
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
+    private javax.swing.JSpinner spnPorcionesProducto;
     private javax.swing.JTable tblPedidosCocina;
     private javax.swing.JTable tblProductos;
     private javax.swing.JTable tblProductosOrden;
+    private javax.swing.JTextField txtCodigoProducto;
+    private javax.swing.JTextField txtDescripcionProducto;
+    private javax.swing.JTextField txtNombreProducto;
+    private javax.swing.JTextField txtPrecioProducto;
     // End of variables declaration//GEN-END:variables
 }

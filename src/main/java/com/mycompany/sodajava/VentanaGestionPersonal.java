@@ -9,7 +9,8 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class VentanaGestionPersonal extends javax.swing.JFrame {
-    
+    private SistemaSoda sistema;
+    private Empleado empleado;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaGestionPersonal.class.getName());
 
     /**
@@ -18,7 +19,77 @@ public class VentanaGestionPersonal extends javax.swing.JFrame {
     public VentanaGestionPersonal() {
         initComponents();
     }
+    
+public VentanaGestionPersonal(SistemaSoda sistema,
+        Empleado empleado) {
+    this();
+    this.sistema = sistema;
+    this.empleado = empleado;
+    setLocationRelativeTo(null);
+    cargarEmpleados();
+    tblEmpleados.getSelectionModel()
+    .addListSelectionListener(evento -> {
+        if (!evento.getValueIsAdjusting()) {
+            mostrarEmpleadoSeleccionado();
+        }
+    });
+}
 
+private void cargarEmpleados() {
+    javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel)
+        tblEmpleados.getModel();
+
+    modelo.setRowCount(0);
+
+    for (Empleado persona : sistema.getEmpleados()) {
+        String cedula = "";
+        String correo = "";
+
+        if (persona instanceof Administrador administrador) {
+            cedula = administrador.getCedula();
+            correo = administrador.getCorreo();
+        }
+
+        modelo.addRow(new Object[]{
+            persona.getNumeroEmpleado(),
+            persona.getNombre(),
+            cedula,
+            correo,
+            persona.getRol(),
+            persona.getUsuario()
+        });
+    }
+}
+private void mostrarEmpleadoSeleccionado() {
+    int fila = tblEmpleados.getSelectedRow();
+
+    if (fila == -1) {
+        return;
+    }
+
+    String numero = tblEmpleados.getValueAt(fila, 0).toString();
+
+    for (Empleado persona : sistema.getEmpleados()) {
+        if (persona.getNumeroEmpleado().equals(numero)) {
+            txtNumeroEmpleado.setText(persona.getNumeroEmpleado());
+            txtNombreEmpleado.setText(persona.getNombre());
+            txtUsuarioEmpleado.setText(persona.getUsuario());
+            cmbRolEmpleado.setSelectedItem(persona.getRol());
+
+            txtContrasenaEmpleado.setText("");
+            txtCedulaEmpleado.setText("");
+            txtCorreoEmpleado.setText("");
+
+            if (persona instanceof Administrador administrador) {
+                txtCedulaEmpleado.setText(administrador.getCedula());
+                txtCorreoEmpleado.setText(administrador.getCorreo());
+            }
+
+            return;
+        }
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,25 +106,25 @@ public class VentanaGestionPersonal extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtNombreEmpleado = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtNumeroEmpleado = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtCedulaEmpleado = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtCorreoEmpleado = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cmbRolEmpleado = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        txtUsuarioEmpleado = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        jPasswordField1 = new javax.swing.JPasswordField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        txtContrasenaEmpleado = new javax.swing.JPasswordField();
+        btnRegistrarEmpleado = new javax.swing.JButton();
+        btnModificarEmpleado = new javax.swing.JButton();
+        btnEliminarEmpleado = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
-        jButton4 = new javax.swing.JButton();
+        tblEmpleados = new javax.swing.JTable();
+        btnVolver = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -89,64 +160,79 @@ public class VentanaGestionPersonal extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel2.setText("Nombre completo:");
 
-        jTextField1.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        txtNombreEmpleado.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
 
         jLabel3.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel3.setText("Número de empleado:");
 
-        jTextField2.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        txtNumeroEmpleado.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        txtNumeroEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                txtNumeroEmpleadoActionPerformed(evt);
             }
         });
 
         jLabel4.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel4.setText("Cédula:");
 
-        jTextField3.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        txtCedulaEmpleado.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        txtCedulaEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                txtCedulaEmpleadoActionPerformed(evt);
             }
         });
 
         jLabel5.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel5.setText("Correo electrónico:");
 
-        jTextField4.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        txtCorreoEmpleado.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        txtCorreoEmpleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCorreoEmpleadoActionPerformed(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel6.setText("Rol:");
 
-        jComboBox1.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Administrador", "Cajero", "Cocinero" }));
+        cmbRolEmpleado.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        cmbRolEmpleado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Administrador", "Cajero", "Cocinero" }));
 
         jLabel7.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel7.setText("Usuario:");
 
-        jTextField5.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        txtUsuarioEmpleado.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
 
         jLabel8.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel8.setText("Contraseña:");
 
-        jPasswordField1.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        txtContrasenaEmpleado.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
 
-        jButton1.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jButton1.setText("Registrar empleado");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnRegistrarEmpleado.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        btnRegistrarEmpleado.setText("Registrar empleado");
+        btnRegistrarEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnRegistrarEmpleadoActionPerformed(evt);
             }
         });
 
-        jButton2.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jButton2.setText("Modificar empleado");
+        btnModificarEmpleado.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        btnModificarEmpleado.setText("Modificar empleado");
+        btnModificarEmpleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarEmpleadoActionPerformed(evt);
+            }
+        });
 
-        jButton3.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jButton3.setText("Eliminar empleado");
+        btnEliminarEmpleado.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        btnEliminarEmpleado.setText("Eliminar empleado");
+        btnEliminarEmpleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarEmpleadoActionPerformed(evt);
+            }
+        });
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        tblEmpleados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -169,10 +255,15 @@ public class VentanaGestionPersonal extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(jTable3);
+        jScrollPane3.setViewportView(tblEmpleados);
 
-        jButton4.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jButton4.setText("Volver");
+        btnVolver.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        btnVolver.setText("Volver");
+        btnVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVolverActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -186,40 +277,40 @@ public class VentanaGestionPersonal extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(cmbRolEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                     .addComponent(jLabel5)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jTextField4))
+                                    .addComponent(txtCorreoEmpleado))
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLabel3)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(txtNumeroEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLabel2)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(txtNombreEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                     .addComponent(jLabel4)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jTextField3)))
+                                    .addComponent(txtCedulaEmpleado)))
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                     .addComponent(jLabel8)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jPasswordField1))
+                                    .addComponent(txtContrasenaEmpleado))
                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                     .addComponent(jLabel7)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(txtUsuarioEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton1)
+                                .addComponent(btnRegistrarEmpleado)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2)
+                                .addComponent(btnModificarEmpleado)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton3)))
+                                .addComponent(btnEliminarEmpleado)))
                         .addGap(132, 132, 132))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -231,7 +322,7 @@ public class VentanaGestionPersonal extends javax.swing.JFrame {
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 713, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(365, 365, 365)
-                        .addComponent(jButton4)))
+                        .addComponent(btnVolver)))
                 .addGap(0, 71, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -242,40 +333,40 @@ public class VentanaGestionPersonal extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNombreEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNumeroEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCedulaEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCorreoEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbRolEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtUsuarioEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtContrasenaEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(btnRegistrarEmpleado)
+                    .addComponent(btnModificarEmpleado)
+                    .addComponent(btnEliminarEmpleado))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
-                .addComponent(jButton4))
+                .addComponent(btnVolver))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -298,17 +389,294 @@ public class VentanaGestionPersonal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void txtNumeroEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNumeroEmpleadoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_txtNumeroEmpleadoActionPerformed
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void txtCedulaEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCedulaEmpleadoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_txtCedulaEmpleadoActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnRegistrarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarEmpleadoActionPerformed
+        if (!(empleado instanceof Administrador)) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Solo un administrador puede registrar empleados."
+    );
+    return;
+}
+
+String nombre = txtNombreEmpleado.getText().trim();
+String numero = txtNumeroEmpleado.getText().trim();
+String usuario = txtUsuarioEmpleado.getText().trim();
+String contrasena =
+    new String(txtContrasenaEmpleado.getPassword());
+String cedula = txtCedulaEmpleado.getText().trim();
+String correo = txtCorreoEmpleado.getText().trim();
+
+if (nombre.isEmpty() || numero.isEmpty()
+        || usuario.isEmpty() || contrasena.isBlank()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Completá nombre, número, usuario y contraseña."
+    );
+    return;
+}
+
+for (Empleado persona : sistema.getEmpleados()) {
+    if (persona.getNumeroEmpleado().equals(numero)
+            || persona.getUsuario().equals(usuario)) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "El número de empleado o usuario ya está registrado."
+        );
+        return;
+    }
+}
+
+if (cmbRolEmpleado.getSelectedItem() == null) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná un rol."
+    );
+    return;
+}
+
+String rol = cmbRolEmpleado.getSelectedItem().toString();
+Empleado nuevo;
+
+switch (rol) {
+    case "Administrador":
+        if (cedula.isEmpty() || correo.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "El administrador necesita cédula y correo."
+            );
+            return;
+        }
+
+        nuevo = new Administrador(
+            cedula, correo, nombre, rol,
+            usuario, contrasena, numero
+        );
+        break;
+
+    case "Cajero":
+        nuevo = new Cajero(
+            nombre, rol, usuario, contrasena, numero
+        );
+        break;
+
+    case "Cocinero":
+        nuevo = new Cocinero(
+            nombre, rol, usuario, contrasena, numero
+        );
+        break;
+
+    default:
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Seleccioná un rol válido."
+        );
+        return;
+}
+
+sistema.registrarEmpleado(nuevo);
+cargarEmpleados();
+txtContrasenaEmpleado.setText("");
+
+javax.swing.JOptionPane.showMessageDialog(
+    this, "Empleado registrado correctamente."
+);
+    }//GEN-LAST:event_btnRegistrarEmpleadoActionPerformed
+
+    private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
+        VentanaAdministrador ventana =
+    new VentanaAdministrador(sistema, empleado);
+
+ventana.setVisible(true);
+this.dispose();
+    }//GEN-LAST:event_btnVolverActionPerformed
+
+    private void txtCorreoEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCorreoEmpleadoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_txtCorreoEmpleadoActionPerformed
+
+    private void btnEliminarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarEmpleadoActionPerformed
+        if (!(empleado instanceof Administrador)) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Solo un administrador puede eliminar empleados."
+    );
+    return;
+}
+
+int fila = tblEmpleados.getSelectedRow();
+
+if (fila == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná un empleado de la tabla."
+    );
+    return;
+}
+
+String numero = tblEmpleados.getValueAt(fila, 0).toString();
+
+if (numero.equals(empleado.getNumeroEmpleado())) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "No podés eliminar la cuenta que estás utilizando."
+    );
+    return;
+}
+
+int respuesta = javax.swing.JOptionPane.showConfirmDialog(
+    this,
+    "¿Eliminar al empleado " + numero + "?",
+    "Eliminar empleado",
+    javax.swing.JOptionPane.YES_NO_OPTION
+);
+
+if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
+    return;
+}
+
+sistema.eliminarEmpleado(numero);
+cargarEmpleados();
+txtContrasenaEmpleado.setText("");
+
+javax.swing.JOptionPane.showMessageDialog(
+    this, "Empleado eliminado correctamente."
+);
+    }//GEN-LAST:event_btnEliminarEmpleadoActionPerformed
+
+    private void btnModificarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarEmpleadoActionPerformed
+        if (!(empleado instanceof Administrador)) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Solo un administrador puede modificar empleados."
+    );
+    return;
+}
+
+int fila = tblEmpleados.getSelectedRow();
+
+if (fila == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná un empleado de la tabla."
+    );
+    return;
+}
+
+String numero = tblEmpleados.getValueAt(fila, 0).toString();
+Empleado original = null;
+
+for (Empleado persona : sistema.getEmpleados()) {
+    if (persona.getNumeroEmpleado().equals(numero)) {
+        original = persona;
+        break;
+    }
+}
+
+if (original == null) {
+    return;
+}
+
+if (!txtNumeroEmpleado.getText().trim().equals(numero)) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Conservá el número original del empleado."
+    );
+    return;
+}
+
+String nombre = txtNombreEmpleado.getText().trim();
+String usuario = txtUsuarioEmpleado.getText().trim();
+String cedula = txtCedulaEmpleado.getText().trim();
+String correo = txtCorreoEmpleado.getText().trim();
+String contrasena =
+    new String(txtContrasenaEmpleado.getPassword());
+
+if (nombre.isEmpty() || usuario.isEmpty()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Completá el nombre y el usuario."
+    );
+    return;
+}
+
+if (contrasena.isEmpty()) {
+    contrasena = original.getContrasena();
+} else if (contrasena.isBlank()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "La contraseña no puede contener solo espacios."
+    );
+    return;
+}
+
+for (Empleado persona : sistema.getEmpleados()) {
+    if (!persona.getNumeroEmpleado().equals(numero)
+            && persona.getUsuario().equals(usuario)) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Ese usuario ya pertenece a otro empleado."
+        );
+        return;
+    }
+}
+
+if (cmbRolEmpleado.getSelectedItem() == null) {
+    return;
+}
+
+String rol = cmbRolEmpleado.getSelectedItem().toString();
+boolean cuentaActual =
+    numero.equals(empleado.getNumeroEmpleado());
+
+if (cuentaActual && !rol.equals("Administrador")) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Para cambiar tu rol, ingresá con otro administrador."
+    );
+    return;
+}
+
+Empleado actualizado;
+
+switch (rol) {
+    case "Administrador":
+        if (cedula.isEmpty() || correo.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "El administrador necesita cédula y correo."
+            );
+            return;
+        }
+
+        actualizado = new Administrador(
+            cedula, correo, nombre, rol,
+            usuario, contrasena, numero
+        );
+        break;
+
+    case "Cajero":
+        actualizado = new Cajero(
+            nombre, rol, usuario, contrasena, numero
+        );
+        break;
+
+    case "Cocinero":
+        actualizado = new Cocinero(
+            nombre, rol, usuario, contrasena, numero
+        );
+        break;
+
+    default:
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Seleccioná un rol válido."
+        );
+        return;
+}
+
+sistema.modificarEmpleado(actualizado);
+
+if (cuentaActual) {
+    this.empleado = actualizado;
+}
+
+cargarEmpleados();
+txtContrasenaEmpleado.setText("");
+
+javax.swing.JOptionPane.showMessageDialog(
+    this, "Empleado modificado correctamente."
+);
+    }//GEN-LAST:event_btnModificarEmpleadoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -336,11 +704,11 @@ public class VentanaGestionPersonal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton btnEliminarEmpleado;
+    private javax.swing.JButton btnModificarEmpleado;
+    private javax.swing.JButton btnRegistrarEmpleado;
+    private javax.swing.JButton btnVolver;
+    private javax.swing.JComboBox<String> cmbRolEmpleado;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -350,17 +718,17 @@ public class VentanaGestionPersonal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
-    private javax.swing.JTable jTable3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTable tblEmpleados;
+    private javax.swing.JTextField txtCedulaEmpleado;
+    private javax.swing.JPasswordField txtContrasenaEmpleado;
+    private javax.swing.JTextField txtCorreoEmpleado;
+    private javax.swing.JTextField txtNombreEmpleado;
+    private javax.swing.JTextField txtNumeroEmpleado;
+    private javax.swing.JTextField txtUsuarioEmpleado;
     // End of variables declaration//GEN-END:variables
 }

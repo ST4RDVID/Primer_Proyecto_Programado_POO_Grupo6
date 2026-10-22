@@ -236,30 +236,20 @@ public class SistemaSoda {
 
     
     public void modificarEmpleado(Empleado empleado) {
-
         if (empleado == null) {
             return;
         }
 
         for (Empleado actual : empleados) {
-
-            if (!actual.getNumeroEmpleado().equals(empleado.getNumeroEmpleado())
-                    && actual.getUsuario().equals(empleado.getUsuario())) {
-
-                System.out.println("Ese nombre de usuario ya esta registrado.");
+            if (!actual.getNumeroEmpleado().equals(empleado.getNumeroEmpleado())&& actual.getUsuario().equals(empleado.getUsuario())) {
+                System.out.println("Ese nombre de usuario ya está registrado.");
                 return;
             }
         }
 
-        for (Empleado actual : empleados) {
-
-            if (actual.getNumeroEmpleado().equals(empleado.getNumeroEmpleado())) {
-
-                actual.setNombre(empleado.getNombre());
-                actual.setRol(empleado.getRol());
-                actual.setUsuario(empleado.getUsuario());
-                actual.setContrasena(empleado.getContrasena());
-
+        for (int i = 0; i < empleados.size(); i++) {
+            if (empleados.get(i).getNumeroEmpleado().equals(empleado.getNumeroEmpleado())) {
+                empleados.set(i, empleado);
                 return;
             }
         }
@@ -439,5 +429,8 @@ public class SistemaSoda {
     public LinkedList<Cliente> getClientes() {
         return new LinkedList<>(clientes);
     }
+    public LinkedList<Empleado> getEmpleados() {
+        return new LinkedList<>(empleados);
+}
 
 }

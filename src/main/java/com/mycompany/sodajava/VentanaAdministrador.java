@@ -36,8 +36,8 @@ public VentanaAdministrador(SistemaSoda sistema, Empleado empleado) {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnGestionPersonal = new javax.swing.JButton();
+        btnReporteVentas = new javax.swing.JButton();
         btnCerrarSesion = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -45,9 +45,19 @@ public VentanaAdministrador(SistemaSoda sistema, Empleado empleado) {
         jLabel1.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 24)); // NOI18N
         jLabel1.setText("Menú del administrador");
 
-        jButton1.setText("Gestión de personal");
+        btnGestionPersonal.setText("Gestión de personal");
+        btnGestionPersonal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGestionPersonalActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Reportes de ventas");
+        btnReporteVentas.setText("Reportes de ventas");
+        btnReporteVentas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReporteVentasActionPerformed(evt);
+            }
+        });
 
         btnCerrarSesion.setText("Cerrar sesión");
         btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
@@ -68,8 +78,8 @@ public VentanaAdministrador(SistemaSoda sistema, Empleado empleado) {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(245, 245, 245)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jButton1)
-                            .addComponent(jButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnGestionPersonal)
+                            .addComponent(btnReporteVentas, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnCerrarSesion, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(178, Short.MAX_VALUE))
         );
@@ -79,9 +89,9 @@ public VentanaAdministrador(SistemaSoda sistema, Empleado empleado) {
                 .addGap(24, 24, 24)
                 .addComponent(jLabel1)
                 .addGap(30, 30, 30)
-                .addComponent(jButton1)
+                .addComponent(btnGestionPersonal)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                .addComponent(btnReporteVentas)
                 .addGap(18, 18, 18)
                 .addComponent(btnCerrarSesion)
                 .addContainerGap(57, Short.MAX_VALUE))
@@ -112,6 +122,20 @@ public VentanaAdministrador(SistemaSoda sistema, Empleado empleado) {
         this.dispose();
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
+    private void btnGestionPersonalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGestionPersonalActionPerformed
+       VentanaGestionPersonal ventana = new VentanaGestionPersonal(sistema, empleado);
+
+        ventana.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnGestionPersonalActionPerformed
+
+    private void btnReporteVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteVentasActionPerformed
+        VentanaReportesVentas ventana = new VentanaReportesVentas(sistema, empleado);
+
+        ventana.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnReporteVentasActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -139,8 +163,8 @@ public VentanaAdministrador(SistemaSoda sistema, Empleado empleado) {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCerrarSesion;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btnGestionPersonal;
+    private javax.swing.JButton btnReporteVentas;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables

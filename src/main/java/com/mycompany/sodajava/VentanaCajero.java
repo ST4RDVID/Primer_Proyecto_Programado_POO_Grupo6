@@ -19,12 +19,13 @@ public class VentanaCajero extends javax.swing.JFrame {
     public VentanaCajero() {
         initComponents();
     }
+    
     public VentanaCajero(SistemaSoda sistema, Empleado empleado) {
-    this();
-    this.sistema = sistema;
-    this.empleado = empleado;
-    setLocationRelativeTo(null);
-}
+        this();
+        this.sistema = sistema;
+        this.empleado = empleado;
+        setLocationRelativeTo(null);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -158,24 +159,21 @@ public class VentanaCajero extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void btnFacturacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFacturacionActionPerformed
-        VentanaFacturacion ventana =
-        new VentanaFacturacion(sistema, empleado);
+        VentanaFacturacion ventana = new VentanaFacturacion(sistema, empleado);
 
-    ventana.setVisible(true);
-    this.dispose();
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnFacturacionActionPerformed
 
     private void btnEntregaPedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntregaPedidosActionPerformed
-        VentanaEntregaPedidos ventana =
-    new VentanaEntregaPedidos(sistema, empleado);
+        VentanaEntregaPedidos ventana = new VentanaEntregaPedidos(sistema, empleado);
 
-ventana.setVisible(true);
-this.dispose();
+        ventana.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnEntregaPedidosActionPerformed
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
-       VentanaLogin login = new VentanaLogin(sistema);
-       login.setVisible(true);
+       VentanaLogin login = new VentanaLogin(sistema); login.setVisible(true);
        this.dispose();
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 

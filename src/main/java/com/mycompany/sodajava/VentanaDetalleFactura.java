@@ -12,7 +12,7 @@ public class VentanaDetalleFactura extends javax.swing.JFrame {
     private SistemaSoda sistema;
     private Empleado empleado;
     private Factura factura;
-    private VentanaFacturacion ventanaOrigen;
+   private javax.swing.JFrame ventanaOrigen;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaDetalleFactura.class.getName());
 
     /**
@@ -106,7 +106,7 @@ for (LineaFactura linea : factura.getPedido().getLineas()) {
 }
 public VentanaDetalleFactura(SistemaSoda sistema,
         Empleado empleado, Factura factura,
-        VentanaFacturacion ventanaOrigen) {
+        javax.swing.JFrame ventanaOrigen) {
 
     this(sistema, empleado, factura);
     this.ventanaOrigen = ventanaOrigen;

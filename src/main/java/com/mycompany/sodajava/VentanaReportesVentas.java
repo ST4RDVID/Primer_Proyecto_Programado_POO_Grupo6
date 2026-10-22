@@ -9,7 +9,8 @@ package com.mycompany.sodajava;
  * @author sara
  */
 public class VentanaReportesVentas extends javax.swing.JFrame {
-    
+    private SistemaSoda sistema;
+    private Empleado empleado;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaReportesVentas.class.getName());
 
     /**
@@ -18,7 +19,15 @@ public class VentanaReportesVentas extends javax.swing.JFrame {
     public VentanaReportesVentas() {
         initComponents();
     }
+    
+public VentanaReportesVentas(SistemaSoda sistema,
+        Empleado empleado) {
+    this();
+    this.sistema = sistema;
+    this.empleado = empleado;
 
+    setLocationRelativeTo(null);
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -31,16 +40,16 @@ public class VentanaReportesVentas extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtFechaDesde = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        txtFechaHasta = new javax.swing.JTextField();
+        btnGenerarReporte = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        tblVentas = new javax.swing.JTable();
+        lblCantidadVentas = new javax.swing.JLabel();
+        lblTotalVentas = new javax.swing.JLabel();
+        btnDetalleFactura = new javax.swing.JButton();
+        btnVolver = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -50,27 +59,32 @@ public class VentanaReportesVentas extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel2.setText("Desde (dd/MM/aaaa):");
 
-        jTextField1.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txtFechaDesde.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        txtFechaDesde.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txtFechaDesdeActionPerformed(evt);
             }
         });
 
         jLabel3.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
         jLabel3.setText("Hasta (dd/MM/aaaa):");
 
-        jTextField2.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        txtFechaHasta.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        txtFechaHasta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                txtFechaHastaActionPerformed(evt);
             }
         });
 
-        jButton1.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jButton1.setText("Generar reporte");
+        btnGenerarReporte.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        btnGenerarReporte.setText("Generar reporte");
+        btnGenerarReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarReporteActionPerformed(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblVentas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -93,24 +107,29 @@ public class VentanaReportesVentas extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblVentas);
 
-        jLabel4.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel4.setText("Cantidad de ventas:");
+        lblCantidadVentas.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblCantidadVentas.setText("Cantidad de ventas:");
 
-        jLabel5.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jLabel5.setText("Total de ventas:");
+        lblTotalVentas.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        lblTotalVentas.setText("Total de ventas:");
 
-        jButton2.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jButton2.setText("Ver detalle de factura");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnDetalleFactura.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        btnDetalleFactura.setText("Ver detalle de factura");
+        btnDetalleFactura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnDetalleFacturaActionPerformed(evt);
             }
         });
 
-        jButton3.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
-        jButton3.setText("Volver");
+        btnVolver.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 13)); // NOI18N
+        btnVolver.setText("Volver");
+        btnVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVolverActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -118,40 +137,36 @@ public class VentanaReportesVentas extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(380, 380, 380)
-                                        .addComponent(jLabel2))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addContainerGap()
-                                        .addComponent(jLabel3)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-                                    .addComponent(jTextField2)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(371, 371, 371)
-                                .addComponent(jLabel1))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(418, 418, 418)
-                                .addComponent(jButton1))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(274, 274, 274)
-                                .addComponent(jLabel4)
-                                .addGap(241, 241, 241)
-                                .addComponent(jLabel5)))
-                        .addGap(0, 290, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(374, 374, 374)
-                .addComponent(jButton2)
-                .addGap(18, 18, 18)
-                .addComponent(jButton3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(380, 380, 380)
+                                .addComponent(jLabel2))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel3)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtFechaDesde, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                            .addComponent(txtFechaHasta)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(371, 371, 371)
+                        .addComponent(jLabel1))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(418, 418, 418)
+                        .addComponent(btnGenerarReporte))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(274, 274, 274)
+                        .addComponent(lblCantidadVentas)
+                        .addGap(241, 241, 241)
+                        .addComponent(lblTotalVentas))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(374, 374, 374)
+                        .addComponent(btnDetalleFactura)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnVolver))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -161,23 +176,23 @@ public class VentanaReportesVentas extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtFechaDesde, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtFechaHasta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                .addComponent(btnGenerarReporte)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5))
+                    .addComponent(lblCantidadVentas)
+                    .addComponent(lblTotalVentas))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(btnDetalleFactura)
+                    .addComponent(btnVolver))
                 .addContainerGap(19, Short.MAX_VALUE))
         );
 
@@ -201,17 +216,133 @@ public class VentanaReportesVentas extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtFechaDesdeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaDesdeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtFechaDesdeActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void txtFechaHastaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaHastaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_txtFechaHastaActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void btnDetalleFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetalleFacturaActionPerformed
+        int fila = tblVentas.getSelectedRow();
+
+if (fila == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Seleccioná una factura de la tabla."
+    );
+    return;
+}
+
+int numero = Integer.parseInt(
+    tblVentas.getValueAt(fila, 0).toString()
+);
+
+Factura factura = sistema.buscarFactura(numero);
+
+if (factura == null) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "No se encontró la factura."
+    );
+    return;
+}
+
+VentanaDetalleFactura ventana =
+    new VentanaDetalleFactura(
+        sistema, empleado, factura, this
+    );
+
+ventana.setVisible(true);
+this.setVisible(false);
+    }//GEN-LAST:event_btnDetalleFacturaActionPerformed
+
+    private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
+        VentanaAdministrador ventana =
+    new VentanaAdministrador(sistema, empleado);
+
+ventana.setVisible(true);
+this.dispose();
+    }//GEN-LAST:event_btnVolverActionPerformed
+
+    private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarReporteActionPerformed
+        if (!(empleado instanceof Administrador)) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Solo un administrador puede consultar reportes."
+    );
+    return;
+}
+
+java.time.format.DateTimeFormatter formatoFecha =
+    java.time.format.DateTimeFormatter.ofPattern("dd/MM/uuuu")
+        .withResolverStyle(
+            java.time.format.ResolverStyle.STRICT
+        );
+
+java.time.LocalDate inicio;
+java.time.LocalDate fin;
+
+try {
+    inicio = java.time.LocalDate.parse(
+        txtFechaDesde.getText().trim(), formatoFecha
+    );
+
+    fin = java.time.LocalDate.parse(
+        txtFechaHasta.getText().trim(), formatoFecha
+    );
+} catch (java.time.format.DateTimeParseException ex) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "Escribí fechas válidas con formato dd/MM/aaaa."
+    );
+    return;
+}
+
+if (inicio.isAfter(fin)) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this, "La fecha inicial no puede ser posterior a la final."
+    );
+    return;
+}
+
+javax.swing.table.DefaultTableModel modelo =
+    (javax.swing.table.DefaultTableModel) tblVentas.getModel();
+
+modelo.setRowCount(0);
+
+java.time.format.DateTimeFormatter formatoHora =
+    java.time.format.DateTimeFormatter.ofPattern("HH:mm");
+
+int cantidad = 0;
+double total = 0;
+
+for (Factura factura : sistema.getFacturas()) {
+    java.time.LocalDate fecha =
+        factura.getFecha().toLocalDate();
+
+    if (factura.getEstado() == EstadoFactura.PAGADA
+            && !fecha.isBefore(inicio)
+            && !fecha.isAfter(fin)) {
+
+        modelo.addRow(new Object[]{
+            String.valueOf(factura.getNumeroFactura()),
+            factura.getFecha().format(formatoFecha),
+            factura.getFecha().format(formatoHora),
+            factura.getCliente().getNombreCompleto(),
+            factura.getCajero().getNombre(),
+            factura.calcularSubtotal(),
+            factura.calcularImpuesto(),
+            factura.calcularTotal()
+        });
+
+        cantidad++;
+        total += factura.calcularTotal();
+    }
+}
+
+lblCantidadVentas.setText("Cantidad de ventas: " + cantidad);
+lblTotalVentas.setText(
+    String.format("Total vendido: ₡%,.2f", total)
+);
+    }//GEN-LAST:event_btnGenerarReporteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -239,18 +370,18 @@ public class VentanaReportesVentas extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton btnDetalleFactura;
+    private javax.swing.JButton btnGenerarReporte;
+    private javax.swing.JButton btnVolver;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JLabel lblCantidadVentas;
+    private javax.swing.JLabel lblTotalVentas;
+    private javax.swing.JTable tblVentas;
+    private javax.swing.JTextField txtFechaDesde;
+    private javax.swing.JTextField txtFechaHasta;
     // End of variables declaration//GEN-END:variables
 }
