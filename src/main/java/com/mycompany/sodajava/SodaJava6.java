@@ -14,6 +14,8 @@ public class SodaJava6 {
         SistemaSoda sistema = new SistemaSoda();
 
         System.out.println("Sistema SodaJava iniciado correctamente.");
+        java.awt.EventQueue.invokeLater(() -> new VentanaLogin().setVisible(true)
+);
     }
     
 }

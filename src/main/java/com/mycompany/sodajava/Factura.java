@@ -55,51 +55,54 @@ public class Factura {
     
     
     public boolean procesarPago() {
-
         if (estado != EstadoFactura.PENDIENTE
                 || pedido == null
                 || pedido.getLineas().isEmpty()) {
             return false;
         }
 
-        // Sumar las cantidades solicitadas por producto
-        java.util.Map<Producto, Integer> cantidades
-                = new java.util.HashMap<>();
+        java.util.Map<Producto, Long> cantidades =
+                new java.util.HashMap<>();
 
         for (LineaFactura linea : pedido.getLineas()) {
-
-            if (linea == null || linea.getProducto() == null
+            if (linea == null
+                    || linea.getProducto() == null
                     || linea.getCantidad() <= 0) {
                 return false;
             }
 
-            Producto producto = linea.getProducto();
-
-            cantidades.merge(producto, linea.getCantidad(),
-                    Integer::sum);
+            cantidades.merge(
+                linea.getProducto(),
+                (long) linea.getCantidad(),
+                Long::sum
+            );
         }
 
-        // Verificar todo el inventario antes de descontar
-        for (java.util.Map.Entry<Producto, Integer> entrada
+        // Validar todos los productos antes de descontar.
+        for (java.util.Map.Entry<Producto, Long> entrada
                 : cantidades.entrySet()) {
 
-            if (!entrada.getKey()
-                    .verificarDisponibilidad(entrada.getValue())) {
+            long cantidad = entrada.getValue();
+
+            if (cantidad > Integer.MAX_VALUE
+                    || !entrada.getKey().verificarDisponibilidad(
+                        (int) cantidad)) {
                 return false;
             }
         }
 
-        // Descontar el inventario
-        for (java.util.Map.Entry<Producto, Integer> entrada
+        // Todas las cantidades ya fueron validadas.
+        for (java.util.Map.Entry<Producto, Long> entrada
                 : cantidades.entrySet()) {
 
             entrada.getKey().descontarPorciones(
-                    entrada.getValue());
+                entrada.getValue().intValue()
+            );
         }
 
         estado = EstadoFactura.PAGADA;
         pedido.bloquearPedido();
-        
+
         return true;
     }
 
@@ -113,7 +116,7 @@ public class Factura {
             return;
         }
 
-        observaciones = "Preparado por: "
+        observaciones = "Pedido preparado por: "
                 + cocinero.getNombre()
                 + " | Empleado: "
                 + cocinero.getNumeroEmpleado();

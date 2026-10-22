@@ -693,7 +693,14 @@ public class VentanaCocina extends javax.swing.JFrame {
             return;
         }
 
-        sistema.eliminarProducto(codigo);
+        if (!sistema.eliminarProducto(codigo)) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "No se pudo eliminar. El producto puede estar "
+                + "en una factura pendiente o ya no existir."
+            );
+            return;
+        }
         cargarProductos();
 
         javax.swing.JOptionPane.showMessageDialog(

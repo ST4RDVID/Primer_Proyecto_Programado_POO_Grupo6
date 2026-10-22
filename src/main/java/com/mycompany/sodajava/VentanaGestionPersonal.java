@@ -541,7 +541,150 @@ private void mostrarEmpleadoSeleccionado() {
     }//GEN-LAST:event_btnEliminarEmpleadoActionPerformed
 
     private void btnModificarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarEmpleadoActionPerformed
-        // TODO add your handling code here:
+        if (!(empleado instanceof Administrador)) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Solo un administrador puede modificar empleados."
+            );
+            return;
+        }
+
+        int fila = tblEmpleados.getSelectedRow();
+
+        if (fila == -1) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Seleccioná un empleado de la tabla."
+            );
+            return;
+        }
+
+        String numeroOriginal =
+                tblEmpleados.getValueAt(fila, 0).toString();
+
+        Empleado actual = null;
+
+        for (Empleado persona : sistema.getEmpleados()) {
+            if (persona.getNumeroEmpleado().equals(numeroOriginal)) {
+                actual = persona;
+                break;
+            }
+        }
+
+        if (actual == null) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "No se encontró el empleado."
+            );
+            return;
+        }
+
+        String numero = txtNumeroEmpleado.getText().trim();
+        String nombre = txtNombreEmpleado.getText().trim();
+        String usuario = txtUsuarioEmpleado.getText().trim();
+        String contrasena =
+                new String(txtContrasenaEmpleado.getPassword());
+        String cedula = txtCedulaEmpleado.getText().trim();
+        String correo = txtCorreoEmpleado.getText().trim();
+
+        if (!numero.equals(numeroOriginal)) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "El número de empleado no se puede cambiar."
+            );
+            return;
+        }
+
+        if (nombre.isEmpty() || usuario.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Completá el nombre y el usuario."
+            );
+            return;
+        }
+
+        for (Empleado persona : sistema.getEmpleados()) {
+            if (!persona.getNumeroEmpleado().equals(numeroOriginal)
+                    && persona.getUsuario().equals(usuario)) {
+                javax.swing.JOptionPane.showMessageDialog(
+                    this, "Ese usuario ya pertenece a otro empleado."
+                );
+                return;
+            }
+        }
+
+        if (cmbRolEmpleado.getSelectedItem() == null) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Seleccioná un rol."
+            );
+            return;
+        }
+
+        String rol = cmbRolEmpleado.getSelectedItem().toString();
+
+        // Si se deja vacía, se conserva la contraseña anterior.
+        if (contrasena.isEmpty()) {
+            contrasena = actual.getContrasena();
+        } else if (contrasena.isBlank()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "La contraseña no puede contener solo espacios."
+            );
+            return;
+        }
+
+        boolean esCuentaActual =
+                numeroOriginal.equals(empleado.getNumeroEmpleado());
+
+        if (esCuentaActual && !rol.equals("Administrador")) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "No podés cambiar tu propio rol durante esta sesión."
+            );
+            return;
+        }
+
+        Empleado modificado;
+
+        switch (rol) {
+            case "Administrador":
+                if (cedula.isEmpty() || correo.isEmpty()) {
+                    javax.swing.JOptionPane.showMessageDialog(
+                        this, "El administrador necesita cédula y correo."
+                    );
+                    return;
+                }
+
+                modificado = new Administrador(
+                    cedula, correo, nombre, rol,
+                    usuario, contrasena, numeroOriginal
+                );
+                break;
+
+            case "Cajero":
+                modificado = new Cajero(
+                    nombre, rol, usuario, contrasena, numeroOriginal
+                );
+                break;
+
+            case "Cocinero":
+                modificado = new Cocinero(
+                    nombre, rol, usuario, contrasena, numeroOriginal
+                );
+                break;
+
+            default:
+                javax.swing.JOptionPane.showMessageDialog(
+                    this, "Seleccioná un rol válido."
+                );
+                return;
+        }
+
+        sistema.modificarEmpleado(modificado);
+
+        if (esCuentaActual) {
+            empleado = modificado;
+        }
+
+        cargarEmpleados();
+        txtContrasenaEmpleado.setText("");
+
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Empleado modificado correctamente."
+        );
     }//GEN-LAST:event_btnModificarEmpleadoActionPerformed
 
     /**

@@ -314,10 +314,26 @@ public class SistemaSoda {
     }
 
 
-    public void eliminarProducto(String codigo) {
+    public boolean eliminarProducto(String codigo) {
+        Producto producto = buscarProducto(codigo);
 
-        productos.removeIf(producto
-                -> producto.getCodigo().equals(codigo));
+        if (producto == null) {
+            return false;
+        }
+
+        for (Factura factura : facturas) {
+            if (factura.getEstado() == EstadoFactura.PENDIENTE) {
+                for (LineaFactura linea
+                        : factura.getPedido().getLineas()) {
+
+                    if (linea.getProducto().getCodigo().equals(codigo)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return productos.remove(producto);
     }
 
     public Producto buscarProducto(String codigo) {
