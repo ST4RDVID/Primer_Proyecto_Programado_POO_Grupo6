@@ -16,18 +16,22 @@ public class VentanaLogin extends javax.swing.JFrame {
     /**
      * Creates new form VentanaLogin
      */
-public VentanaLogin() {
-    this(new SistemaSoda());
+    public VentanaLogin() {
+        this(new SistemaSoda());
 
-    VentanaOrdenes ordenes = new VentanaOrdenes(sistema);
-    ordenes.setVisible(true);
-}
+        VentanaOrdenes ordenes = new VentanaOrdenes(sistema);
+        ordenes.setVisible(true);
+    }
 
-public VentanaLogin(SistemaSoda sistema) {
-    this.sistema = sistema;
-    initComponents();
-    setLocationRelativeTo(null);
-}
+    public VentanaLogin(SistemaSoda sistema) {
+        this.sistema = sistema;
+        initComponents();
+        setLocationRelativeTo(null);
+
+        VentanaOrdenes ordenes = new VentanaOrdenes(sistema);
+        ordenes.setVisible(true);
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

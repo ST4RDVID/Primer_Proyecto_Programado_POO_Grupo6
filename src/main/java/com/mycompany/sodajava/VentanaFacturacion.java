@@ -621,12 +621,12 @@ this.setVisible(false);
 }
 
     try {
-    spnCantidad.commitEdit();
-} catch (java.text.ParseException ex) {
-    javax.swing.JOptionPane.showMessageDialog(
-        this, "Escribí una cantidad válida."
-    );
-    return;
+        spnCantidad.commitEdit();
+        } catch (java.text.ParseException ex) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Escribí una cantidad válida."
+            );
+            return;
 }
 
     int cantidad = ((Number) spnCantidad.getValue()).intValue();
